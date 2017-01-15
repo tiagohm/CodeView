@@ -6,4 +6,9 @@
   android:icon="@drawable/change_theme"
   android:title="CHANGE THEME"
   app:showAsAction="always"/>
+ <item
+  android:id="@+id/change_highlighter_action"
+  android:icon="@drawable/highlighter"
+  android:title="CHANGE HIGHLIGHTER"
+  app:showAsAction="always"/>
 </menu>

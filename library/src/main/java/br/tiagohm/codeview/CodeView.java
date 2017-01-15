@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -43,15 +44,20 @@ public class CodeView extends WebView
         }
     }
 
+    public SyntaxHighlighter getSyntaxHighlighter()
+    {
+        return mSyntaxHighlighter;
+    }
+
     public CodeView setSyntaxHighlighter(SyntaxHighlighter sh)
     {
         mSyntaxHighlighter = sh;
         return this;
     }
 
-    public SyntaxHighlighter getSyntaxHighlighter()
+    public String getCode()
     {
-        return mSyntaxHighlighter;
+        return mCode;
     }
 
     public CodeView setCode(String code)
@@ -60,11 +66,6 @@ public class CodeView extends WebView
         mCode = code;
         mEscapedCode = Html.escapeHtml(code);
         return this;
-    }
-
-    public String getCode()
-    {
-        return mCode;
     }
 
     public Language getLanguage()
@@ -92,11 +93,13 @@ public class CodeView extends WebView
     {
         if(mSyntaxHighlighter != null)
         {
+            String s;
             loadDataWithBaseURL("",
-                    mSyntaxHighlighter.getHtmlCode(mEscapedCode, getLanguage()),
+                    s = mSyntaxHighlighter.getHtmlCode(mEscapedCode, getLanguage()),
                     "text/html",
                     "UTF-8",
                     "");
+            Log.d("TAG", s);
         }
     }
 }

@@ -2,6 +2,32 @@ package br.tiagohm.codeview;
 
 public final class Prism extends SyntaxHighlighter
 {
+    private static final String HTML_SCRIPT =
+            "<!DOCTYPE html>\n" +
+                    "<html>\n" +
+                    "<head>\n" +
+                    "\t<link href=\"%s\" rel=\"stylesheet\" />\n" +
+                    "<style>body, pre, code {margin: 0px !important;}</style>\n" +
+                    "</head>\n" +
+                    "<body>\n" +
+                    "<pre><code class=\"language-%s\">%s</code></pre>" +
+                    "\t<script src=\"%s\"></script>\n" +
+                    "</body>\n" +
+                    "</html>";
+    private static final String JS_PATH = "file:///android_asset/prism/prism.js";
+
+    public Prism()
+    {
+        setTheme(Themes.DEFAULT);
+    }
+
+    @Override
+    public final String getHtmlCode(String code, Language lang)
+    {
+        return String.format(HTML_SCRIPT,
+                getTheme().getPath(), lang.getLanguageName(), code, JS_PATH);
+    }
+
     public enum Themes implements Theme
     {
         DEFAULT("default"),
@@ -165,32 +191,5 @@ public final class Prism extends SyntaxHighlighter
         {
             return name;
         }
-    }
-
-    public Prism()
-    {
-        setTheme(Themes.DEFAULT);
-    }
-
-    private static final String HTML_SCRIPT =
-            "<!DOCTYPE html>\n" +
-                    "<html>\n" +
-                    "<head>\n" +
-                    "\t<link href=\"%s\" rel=\"stylesheet\" />\n" +
-                    "<style>body, pre, code {margin: 0px !important;}</style>\n" +
-                    "</head>\n" +
-                    "<body>\n" +
-                    "<pre><code class=\"language-%s\">%s</code></pre>" +
-                    "\t<script src=\"%s\"></script>\n" +
-                    "</body>\n" +
-                    "</html>";
-
-    private static final String JS_PATH = "file:///android_asset/prism/prism.js";
-
-    @Override
-    public final String getHtmlCode(String code, Language lang)
-    {
-        return String.format(HTML_SCRIPT,
-                getTheme().getPath(), lang.getLanguageName(), code, JS_PATH);
     }
 }
