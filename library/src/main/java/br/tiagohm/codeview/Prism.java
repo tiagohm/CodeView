@@ -76,7 +76,7 @@ public final class Prism extends SyntaxHighlighter
         BRO("bro"),
         C("c"),
         C_SHARP("csharp"),
-        C_PLUS_PLUS("cpp"),
+        CPP("cpp"),
         COFFEESCRIPT("coffeescript"),
         CRYSTAL("crystal"),
         CSS_EXTRAS("css-extras"),
