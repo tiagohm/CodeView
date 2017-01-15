@@ -4,14 +4,13 @@ import android.content.Context;
 import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 public class CodeView extends WebView
 {
-    private SyntaxHighlighter mSyntaxHighlighter = new Prism();
+    private SyntaxHighlighter mSyntaxHighlighter;
     private String mCode = "";
     private String mEscapedCode = "";
     private Language mLanguage;
@@ -91,15 +90,12 @@ public class CodeView extends WebView
 
     public void apply()
     {
-        if(mSyntaxHighlighter != null)
-        {
-            String s;
-            loadDataWithBaseURL("",
-                    s = mSyntaxHighlighter.getHtmlCode(mEscapedCode, getLanguage()),
-                    "text/html",
-                    "UTF-8",
-                    "");
-            Log.d("TAG", s);
-        }
+        loadDataWithBaseURL("",
+                mSyntaxHighlighter != null ?
+                        mSyntaxHighlighter.getHtmlCode(mEscapedCode, getLanguage()) :
+                        mEscapedCode,
+                "text/html",
+                "UTF-8",
+                "");
     }
 }
