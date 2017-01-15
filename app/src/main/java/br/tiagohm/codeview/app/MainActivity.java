@@ -15,85 +15,77 @@ import br.tiagohm.codeview.Theme;
 public class MainActivity extends AppCompatActivity
 {
 
-    private static final String C_CODE = "#include <stdio.h>\n" +
-            "#include <stdlib.h>  /* For exit() function */\n" +
-            "int main()\n" +
-            "{\n" +
-            "   char sentence[1000];\n" +
-            "   FILE *fptr;\n" +
+    private static final String JAVA_CODE = "import java.util.*;\n" +
+            "import java.awt.*;\n" +
+            "import java.awt.event.*;\n" +
             "\n" +
-            "   fptr = fopen(\"program.txt\", \"w\");\n" +
-            "   if(fptr == NULL)\n" +
-            "   {\n" +
-            "      printf(\"Error!\");\n" +
-            "      exit(1);\n" +
-            "   }\n" +
-            "   \n" +
-            "   printf(\"Enter a sentence:\\n\");\n" +
-            "   gets(sentence);\n" +
+            "import javax.swing.*;\n" +
+            "import javax.accessibility.*;\n" +
             "\n" +
-            "   fprintf(fptr,\"%s\", sentence);\n" +
-            "   fclose(fptr);\n" +
+            "public class BigExample extends JFrame {\n" +
             "\n" +
-            "   return 0;\n" +
-            "}";
-    private static final String ARDUINO = "#include <SPI.h>  // needed for Arduino versions later than 0018\n" +
-            "#include <Ethernet.h>\n" +
-            "#include <EthernetUdp.h>  // UDP library from: bjoern@cs.stanford.edu 12/30/2008\n" +
+            "  public BigExample() {\n" +
+            "    super(\"Big Accessibility Example\");\n" +
+            "    setSize(700,500);\n" +
+            "    setDefaultCloseOperation(EXIT_ON_CLOSE);\n" +
             "\n" +
-            "\n" +
-            "// Enter a MAC address and IP address for your controller below.\n" +
-            "// The IP address will be dependent on your local network:\n" +
-            "byte mac[] = {\n" +
-            "  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED\n" +
-            "};\n" +
-            "IPAddress ip(192, 168, 1, 177);\n" +
-            "\n" +
-            "unsigned int localPort = 8888;      // local port to listen on\n" +
-            "\n" +
-            "// buffers for receiving and sending data\n" +
-            "char packetBuffer[UDP_TX_PACKET_MAX_SIZE];  //buffer to hold incoming packet,\n" +
-            "char  ReplyBuffer[] = \"acknowledged\";       // a string to send back\n" +
-            "\n" +
-            "// An EthernetUDP instance to let us send and receive packets over UDP\n" +
-            "EthernetUDP Udp;\n" +
-            "\n" +
-            "void setup() {\n" +
-            "  // start the Ethernet and UDP:\n" +
-            "  Ethernet.begin(mac, ip);\n" +
-            "  Udp.begin(localPort);\n" +
-            "\n" +
-            "  Serial.begin(9600);\n" +
-            "}\n" +
-            "\n" +
-            "void loop() {\n" +
-            "  // if there's data available, read a packet\n" +
-            "  int packetSize = Udp.parsePacket();\n" +
-            "  if (packetSize) {\n" +
-            "    Serial.print(\"Received packet of size \");\n" +
-            "    Serial.println(packetSize);\n" +
-            "    Serial.print(\"From \");\n" +
-            "    IPAddress remote = Udp.remoteIP();\n" +
-            "    for (int i = 0; i < 4; i++) {\n" +
-            "      Serial.print(remote[i], DEC);\n" +
-            "      if (i < 3) {\n" +
-            "        Serial.print(\".\");\n" +
+            "    JMenuBar jmb = new JMenuBar();\n" +
+            "    JMenu fileMenu = new JMenu(\"File\");\n" +
+            "    JMenuItem openItem = new JMenuItem(\"Open\");\n" +
+            "    JMenuItem saveItem = new JMenuItem(\"Save\");\n" +
+            "    JMenuItem exitItem = new JMenuItem(\"Exit\");\n" +
+            "    exitItem.addActionListener(new ActionListener() {\n" +
+            "      public void actionPerformed(ActionEvent ae) {\n" +
+            "        System.exit(0);\n" +
             "      }\n" +
-            "    }\n" +
-            "    Serial.print(\", port \");\n" +
-            "    Serial.println(Udp.remotePort());\n" +
+            "    });\n" +
             "\n" +
-            "    // read the packet into packetBufffer\n" +
-            "    Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);\n" +
-            "    Serial.println(\"Contents:\");\n" +
-            "    Serial.println(packetBuffer);\n" +
+            "    fileMenu.add(openItem);\n" +
+            "    fileMenu.add(saveItem);\n" +
+            "    fileMenu.add(new JSeparator());\n" +
+            "    fileMenu.add(exitItem);\n" +
+            "    jmb.add(fileMenu);\n" +
+            "    setJMenuBar(jmb);\n" +
             "\n" +
-            "    // send a reply to the IP address and port that sent us the packet we received\n" +
-            "    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());\n" +
-            "    Udp.write(ReplyBuffer);\n" +
-            "    Udp.endPacket();\n" +
+            "    JTextArea jta = new JTextArea(\"[Notes]\\n\");\n" +
+            "    JScrollPane sp1 = new JScrollPane(jta);\n" +
+            "    sp1.setMinimumSize(new Dimension(200,200));\n" +
+            "    sp1.setPreferredSize(new Dimension(200,200));\n" +
+            "\n" +
+            "    String[] titles = { \"Name\", \"Start Date\", \"Job Title\" };\n" +
+            "    String[][] data = {\n" +
+            "      {\"Jordan\", \"2001\", \"Director\"},\n" +
+            "      {\"Naveen\", \"1999\", \"Programmer\"},\n" +
+            "      {\"Jia\", \"2000\", \"Analyst\"},\n" +
+            "      {\"Brooks\", \"1998\", \"Evangelist\"}\n" +
+            "    };\n" +
+            "    JTable table = new JTable(data, titles);\n" +
+            "    table.getAccessibleContext().setAccessibleDescription(\"Employee Statistics\");\n" +
+            "    JPanel rightPane = new JPanel(new BorderLayout());\n" +
+            "    rightPane.add(new JScrollPane(table), BorderLayout.CENTER);\n" +
+            "    rightPane.add(new JLabel(new ImageIcon(\"logo.gif\")), BorderLayout.SOUTH);\n" +
+            "\n" +
+            "    JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp1, rightPane);\n" +
+            "\n" +
+            "    getContentPane().add(jsp, BorderLayout.CENTER);\n" +
+            "\n" +
+            "    JPanel bPane = new JPanel();\n" +
+            "    JButton okButton = new JButton(\"Ok\");\n" +
+            "    JButton applyButton = new JButton(\"Apply\");\n" +
+            "    JButton clearButton = new JButton(\"Clear\");\n" +
+            "    bPane.add(okButton);\n" +
+            "    bPane.add(applyButton);\n" +
+            "    bPane.add(clearButton);\n" +
+            "\n" +
+            "    getContentPane().add(bPane, BorderLayout.SOUTH);\n" +
+            "\n" +
+            "    setVisible(true);\n" +
             "  }\n" +
-            "  delay(10);\n" +
+            "\n" +
+            "  public static void main(String args[]) {\n" +
+            "    new BigExample();\n" +
+            "    new AssistiveExample();\n" +
+            "  }\n" +
             "}";
 
     private Theme[] THEMES;
@@ -111,8 +103,8 @@ public class MainActivity extends AppCompatActivity
 
         THEMES = HightlightJs.Themes.values();
         cv.setSyntaxHighlighter(sh = new HightlightJs());
-        cv.setCode(C_CODE)
-                .setLanguage(HightlightJs.Languages.CPP)
+        cv.setCode(JAVA_CODE)
+                .setLanguage(HightlightJs.Languages.JAVA)
                 .setTextSize(12)
                 .apply();
     }
@@ -142,14 +134,14 @@ public class MainActivity extends AppCompatActivity
                 {
                     highlighter = 1;
                     cv.setSyntaxHighlighter(sh = new Prism())
-                            .setLanguage(Prism.Languages.C);
+                            .setLanguage(Prism.Languages.JAVA);
                     THEMES = Prism.Themes.values();
                 }
                 else
                 {
                     highlighter = 0;
                     cv.setSyntaxHighlighter(sh = new HightlightJs())
-                            .setLanguage(HightlightJs.Languages.CPP);
+                            .setLanguage(HightlightJs.Languages.JAVA);
                     THEMES = HightlightJs.Themes.values();
                 }
 
