@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity
         cv.setSyntaxHighlighter(sh = new HightlightJs());
         cv.setCode(C_CODE)
                 .setLanguage(HightlightJs.Languages.CPP)
+                .setTextSize(12)
                 .apply();
     }
 

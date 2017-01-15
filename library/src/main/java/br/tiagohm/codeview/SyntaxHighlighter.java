@@ -4,7 +4,7 @@ public abstract class SyntaxHighlighter
 {
     private Theme mTheme;
 
-    public abstract String getHtmlCode(String code, Language lang);
+    public abstract String getHtmlCode(String code, Language lang, int textSize);
 
     public Theme getTheme()
     {

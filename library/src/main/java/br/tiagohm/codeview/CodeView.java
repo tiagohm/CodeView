@@ -14,6 +14,7 @@ public class CodeView extends WebView
     private String mCode = "";
     private String mEscapedCode = "";
     private Language mLanguage;
+    private int mTextSize = 14;
 
     public CodeView(Context context)
     {
@@ -88,11 +89,22 @@ public class CodeView extends WebView
         return this;
     }
 
+    public int getTextSize()
+    {
+        return mTextSize;
+    }
+
+    public CodeView setTextSize(int size)
+    {
+        mTextSize = size;
+        return this;
+    }
+
     public void apply()
     {
         loadDataWithBaseURL("",
                 mSyntaxHighlighter != null ?
-                        mSyntaxHighlighter.getHtmlCode(mEscapedCode, getLanguage()) :
+                        mSyntaxHighlighter.getHtmlCode(mEscapedCode, getLanguage(), getTextSize()) :
                         mEscapedCode,
                 "text/html",
                 "UTF-8",

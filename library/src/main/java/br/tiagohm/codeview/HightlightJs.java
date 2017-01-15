@@ -8,6 +8,7 @@ public class HightlightJs extends SyntaxHighlighter
                     "<head>\n" +
                     "<link rel=\"stylesheet\" href=\"%s\" />\n" +
                     "<style>body, code, pre {margin: 0px !important;}</style>\n" +
+                    "<style>span, code {font-size: %dpx !important; line-height: 1.2 !important;}</style>\n" +
                     "<script src=\"%s\"></script>\n" +
                     "<script>hljs.initHighlightingOnLoad();</script>" +
                     "</head>\n" +
@@ -24,10 +25,11 @@ public class HightlightJs extends SyntaxHighlighter
     }
 
     @Override
-    public String getHtmlCode(String code, Language lang)
+    public String getHtmlCode(String code, Language lang, int textSize)
     {
         return String.format(HTML_SCRIPT,
                 getTheme().getPath(),
+                textSize,
                 JS_PATH,
                 lang.getLanguageName(), code);
     }

@@ -8,6 +8,7 @@ public final class Prism extends SyntaxHighlighter
                     "<head>\n" +
                     "\t<link href=\"%s\" rel=\"stylesheet\" />\n" +
                     "<style>body, pre, code {margin: 0px !important;}</style>\n" +
+                    "<style>code, pre {font-size: %dpx !important; line-height: 1.2 !important;}</style>\n" +
                     "</head>\n" +
                     "<body>\n" +
                     "<pre><code class=\"language-%s\">%s</code></pre>" +
@@ -22,10 +23,13 @@ public final class Prism extends SyntaxHighlighter
     }
 
     @Override
-    public final String getHtmlCode(String code, Language lang)
+    public final String getHtmlCode(String code, Language lang, int textSize)
     {
         return String.format(HTML_SCRIPT,
-                getTheme().getPath(), lang.getLanguageName(), code, JS_PATH);
+                getTheme().getPath(),
+                textSize,
+                lang.getLanguageName(), code,
+                JS_PATH);
     }
 
     public enum Themes implements Theme
