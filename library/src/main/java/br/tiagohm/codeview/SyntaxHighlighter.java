@@ -7,6 +7,12 @@ public abstract class SyntaxHighlighter
 
     public abstract String getHtmlCode(String code, Language lang, int textSize);
 
+    public abstract Theme[] getSupportedThemes();
+
+    public abstract Language[] getSupportedLanguages();
+
+    public abstract String getName();
+
     public Theme getTheme()
     {
         return mTheme;

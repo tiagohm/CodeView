@@ -1,0 +1,25 @@
+pre {
+  padding: 0;
+  font-family: 'Monaco', 'Source Code Pro', monospace;
+  font-size: 1em;
+}
+.rainbow {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+.rainbow .line:hover {
+}
+.rainbow .line:hover .line-number {
+}
+.rainbow .line .line-number {
+  text-align: right;
+  padding-left: 0.8em;
+  padding-right: 0.8em;
+}
+.rainbow .line .line-number:before {
+  content: attr(data-line-number);
+}
+.rainbow .line .line-code {
+  padding-left: 1em;
+  width: 100%;
+}

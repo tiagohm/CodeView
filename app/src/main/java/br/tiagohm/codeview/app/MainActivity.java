@@ -9,6 +9,7 @@ import android.widget.Toast;
 import br.tiagohm.codeview.CodeView;
 import br.tiagohm.codeview.HightlightJs;
 import br.tiagohm.codeview.Prism;
+import br.tiagohm.codeview.Rainbow;
 import br.tiagohm.codeview.SyntaxHighlighter;
 import br.tiagohm.codeview.Theme;
 
@@ -109,10 +110,11 @@ public class MainActivity extends AppCompatActivity
             "    }\n" +
             "}";
 
-    private Theme[] THEMES;
+    private SyntaxHighlighter[] SHS = new SyntaxHighlighter[]{
+            new HightlightJs(), new Prism(), new Rainbow()
+    };
     private int themePos = 0;
-    private int highlighter = 0;
-    private SyntaxHighlighter sh;
+    private int hlPos = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -122,10 +124,9 @@ public class MainActivity extends AppCompatActivity
 
         final CodeView cv = (CodeView)findViewById(R.id.code_view);
 
-        THEMES = HightlightJs.Themes.values();
-        cv.setSyntaxHighlighter(sh = new HightlightJs());
+        cv.setSyntaxHighlighter(new Rainbow());
         cv.setCode(JAVA_CODE)
-                .setLanguage(HightlightJs.Languages.JAVA)
+                .setLanguage(Rainbow.Languages.JAVA)
                 .setTextSize(12)
                 .setShowLineNumber(true)
                 .apply();
@@ -147,30 +148,19 @@ public class MainActivity extends AppCompatActivity
         switch(id)
         {
             case R.id.change_theme_action:
-                cv.setTheme(THEMES[themePos]).apply();
-                Toast.makeText(MainActivity.this, ((Enum)THEMES[themePos]).name(), Toast.LENGTH_SHORT).show();
-                themePos = ++themePos % THEMES.length;
+                Theme theme = SHS[hlPos].getSupportedThemes()[themePos];
+                cv.setTheme(theme).apply();
+                Toast.makeText(MainActivity.this, ((Enum)theme).name(), Toast.LENGTH_SHORT).show();
+                themePos = ++themePos % SHS[hlPos].getSupportedThemes().length;
                 break;
             case R.id.change_highlighter_action:
-                if(highlighter == 0)
-                {
-                    highlighter = 1;
-                    cv.setSyntaxHighlighter(sh = new Prism())
-                            .setShowLineNumber(true)
-                            .setLanguage(Prism.Languages.JAVA);
-                    THEMES = Prism.Themes.values();
-                }
-                else
-                {
-                    highlighter = 0;
-                    cv.setSyntaxHighlighter(sh = new HightlightJs())
-                            .setShowLineNumber(true)
-                            .setLanguage(HightlightJs.Languages.JAVA);
-                    THEMES = HightlightJs.Themes.values();
-                }
-
+                hlPos  = ++hlPos % SHS.length;
                 themePos = 0;
-                cv.setTheme(THEMES[themePos]).apply();
+                cv.setSyntaxHighlighter(SHS[hlPos])
+                        .setShowLineNumber(true);
+                theme = SHS[hlPos].getSupportedThemes()[themePos];
+                cv.setTheme(theme).apply();
+                Toast.makeText(MainActivity.this, SHS[hlPos].getName(), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.show_line_number_action:
                 cv.toggleShowLineNumber().apply();

@@ -35,6 +35,24 @@ public class HightlightJs extends SyntaxHighlighter
     }
 
     @Override
+    public Theme[] getSupportedThemes()
+    {
+        return Themes.values();
+    }
+
+    @Override
+    public Language[] getSupportedLanguages()
+    {
+        return Languages.values();
+    }
+
+    @Override
+    public String getName()
+    {
+        return "HightlightJs";
+    }
+
+    @Override
     public String getHtmlCode(String code, Language lang, int textSize)
     {
         BODY_CSS = "margin: 0px !important;";

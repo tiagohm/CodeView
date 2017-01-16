@@ -33,6 +33,24 @@ public final class Prism extends SyntaxHighlighter
     }
 
     @Override
+    public Language[] getSupportedLanguages()
+    {
+        return Languages.values();
+    }
+
+    @Override
+    public Theme[] getSupportedThemes()
+    {
+        return Themes.values();
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Prism";
+    }
+
+    @Override
     public final String getHtmlCode(String code, Language lang, int textSize)
     {
         BODY_CSS = "margin: 0px !important;";
