@@ -15,77 +15,98 @@ import br.tiagohm.codeview.Theme;
 public class MainActivity extends AppCompatActivity
 {
 
-    private static final String JAVA_CODE = "import java.util.*;\n" +
-            "import java.awt.*;\n" +
-            "import java.awt.event.*;\n" +
+    private static final String JAVA_CODE = "package com.example.android.bluetoothchat;\n" +
             "\n" +
-            "import javax.swing.*;\n" +
-            "import javax.accessibility.*;\n" +
+            "import android.os.Bundle;\n" +
+            "import android.support.v4.app.FragmentTransaction;\n" +
+            "import android.view.Menu;\n" +
+            "import android.view.MenuItem;\n" +
+            "import android.widget.ViewAnimator;\n" +
             "\n" +
-            "public class BigExample extends JFrame {\n" +
+            "import com.example.android.common.activities.SampleActivityBase;\n" +
+            "import com.example.android.common.logger.Log;\n" +
+            "import com.example.android.common.logger.LogFragment;\n" +
+            "import com.example.android.common.logger.LogWrapper;\n" +
+            "import com.example.android.common.logger.MessageOnlyLogFilter;\n" +
             "\n" +
-            "  public BigExample() {\n" +
-            "    super(\"Big Accessibility Example\");\n" +
-            "    setSize(700,500);\n" +
-            "    setDefaultCloseOperation(EXIT_ON_CLOSE);\n" +
+            "/**\n" +
+            " * A simple launcher activity containing a summary sample description, sample log and a custom\n" +
+            " * {@link android.support.v4.app.Fragment} which can display a view.\n" +
+            " * <p>\n" +
+            " * For devices with displays with a width of 720dp or greater, the sample log is always visible,\n" +
+            " * on other devices it's visibility is controlled by an item on the Action Bar.\n" +
+            " */\n" +
+            "public class MainActivity extends SampleActivityBase {\n" +
             "\n" +
-            "    JMenuBar jmb = new JMenuBar();\n" +
-            "    JMenu fileMenu = new JMenu(\"File\");\n" +
-            "    JMenuItem openItem = new JMenuItem(\"Open\");\n" +
-            "    JMenuItem saveItem = new JMenuItem(\"Save\");\n" +
-            "    JMenuItem exitItem = new JMenuItem(\"Exit\");\n" +
-            "    exitItem.addActionListener(new ActionListener() {\n" +
-            "      public void actionPerformed(ActionEvent ae) {\n" +
-            "        System.exit(0);\n" +
-            "      }\n" +
-            "    });\n" +
+            "    public static final String TAG = \"MainActivity\";\n" +
             "\n" +
-            "    fileMenu.add(openItem);\n" +
-            "    fileMenu.add(saveItem);\n" +
-            "    fileMenu.add(new JSeparator());\n" +
-            "    fileMenu.add(exitItem);\n" +
-            "    jmb.add(fileMenu);\n" +
-            "    setJMenuBar(jmb);\n" +
+            "    // Whether the Log Fragment is currently shown\n" +
+            "    private boolean mLogShown;\n" +
             "\n" +
-            "    JTextArea jta = new JTextArea(\"[Notes]\\n\");\n" +
-            "    JScrollPane sp1 = new JScrollPane(jta);\n" +
-            "    sp1.setMinimumSize(new Dimension(200,200));\n" +
-            "    sp1.setPreferredSize(new Dimension(200,200));\n" +
+            "    @Override\n" +
+            "    protected void onCreate(Bundle savedInstanceState) {\n" +
+            "        super.onCreate(savedInstanceState);\n" +
+            "        setContentView(R.layout.activity_main);\n" +
             "\n" +
-            "    String[] titles = { \"Name\", \"Start Date\", \"Job Title\" };\n" +
-            "    String[][] data = {\n" +
-            "      {\"Jordan\", \"2001\", \"Director\"},\n" +
-            "      {\"Naveen\", \"1999\", \"Programmer\"},\n" +
-            "      {\"Jia\", \"2000\", \"Analyst\"},\n" +
-            "      {\"Brooks\", \"1998\", \"Evangelist\"}\n" +
-            "    };\n" +
-            "    JTable table = new JTable(data, titles);\n" +
-            "    table.getAccessibleContext().setAccessibleDescription(\"Employee Statistics\");\n" +
-            "    JPanel rightPane = new JPanel(new BorderLayout());\n" +
-            "    rightPane.add(new JScrollPane(table), BorderLayout.CENTER);\n" +
-            "    rightPane.add(new JLabel(new ImageIcon(\"logo.gif\")), BorderLayout.SOUTH);\n" +
+            "        if (savedInstanceState == null) {\n" +
+            "            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();\n" +
+            "            BluetoothChatFragment fragment = new BluetoothChatFragment();\n" +
+            "            transaction.replace(R.id.sample_content_fragment, fragment);\n" +
+            "            transaction.commit();\n" +
+            "        }\n" +
+            "    }\n" +
             "\n" +
-            "    JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp1, rightPane);\n" +
+            "    @Override\n" +
+            "    public boolean onCreateOptionsMenu(Menu menu) {\n" +
+            "        getMenuInflater().inflate(R.menu.main, menu);\n" +
+            "        return true;\n" +
+            "    }\n" +
             "\n" +
-            "    getContentPane().add(jsp, BorderLayout.CENTER);\n" +
+            "    @Override\n" +
+            "    public boolean onPrepareOptionsMenu(Menu menu) {\n" +
+            "        MenuItem logToggle = menu.findItem(R.id.menu_toggle_log);\n" +
+            "        logToggle.setVisible(findViewById(R.id.sample_output) instanceof ViewAnimator);\n" +
+            "        logToggle.setTitle(mLogShown ? R.string.sample_hide_log : R.string.sample_show_log);\n" +
             "\n" +
-            "    JPanel bPane = new JPanel();\n" +
-            "    JButton okButton = new JButton(\"Ok\");\n" +
-            "    JButton applyButton = new JButton(\"Apply\");\n" +
-            "    JButton clearButton = new JButton(\"Clear\");\n" +
-            "    bPane.add(okButton);\n" +
-            "    bPane.add(applyButton);\n" +
-            "    bPane.add(clearButton);\n" +
+            "        return super.onPrepareOptionsMenu(menu);\n" +
+            "    }\n" +
             "\n" +
-            "    getContentPane().add(bPane, BorderLayout.SOUTH);\n" +
+            "    @Override\n" +
+            "    public boolean onOptionsItemSelected(MenuItem item) {\n" +
+            "        switch(item.getItemId()) {\n" +
+            "            case R.id.menu_toggle_log:\n" +
+            "                mLogShown = !mLogShown;\n" +
+            "                ViewAnimator output = (ViewAnimator) findViewById(R.id.sample_output);\n" +
+            "                if (mLogShown) {\n" +
+            "                    output.setDisplayedChild(1);\n" +
+            "                } else {\n" +
+            "                    output.setDisplayedChild(0);\n" +
+            "                }\n" +
+            "                supportInvalidateOptionsMenu();\n" +
+            "                return true;\n" +
+            "        }\n" +
+            "        return super.onOptionsItemSelected(item);\n" +
+            "    }\n" +
             "\n" +
-            "    setVisible(true);\n" +
-            "  }\n" +
+            "    /** Create a chain of targets that will receive log data */\n" +
+            "    @Override\n" +
+            "    public void initializeLogging() {\n" +
+            "        // Wraps Android's native log framework.\n" +
+            "        LogWrapper logWrapper = new LogWrapper();\n" +
+            "        // Using Log, front-end to the logging chain, emulates android.util.log method signatures.\n" +
+            "        Log.setLogNode(logWrapper);\n" +
             "\n" +
-            "  public static void main(String args[]) {\n" +
-            "    new BigExample();\n" +
-            "    new AssistiveExample();\n" +
-            "  }\n" +
+            "        // Filter strips out everything except the message text.\n" +
+            "        MessageOnlyLogFilter msgFilter = new MessageOnlyLogFilter();\n" +
+            "        logWrapper.setNext(msgFilter);\n" +
+            "\n" +
+            "        // On screen logging via a fragment with a TextView.\n" +
+            "        LogFragment logFragment = (LogFragment) getSupportFragmentManager()\n" +
+            "                .findFragmentById(R.id.log_fragment);\n" +
+            "        msgFilter.setNext(logFragment.getLogView());\n" +
+            "\n" +
+            "        Log.i(TAG, \"Ready\");\n" +
+            "    }\n" +
             "}";
 
     private Theme[] THEMES;
