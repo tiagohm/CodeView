@@ -16,7 +16,7 @@ allprojects {
 ```
 Add the dependency:
 ```gradle
-compile 'com.github.tiagohm:CodeView:0.1.0
+compile 'com.github.tiagohm:CodeView:0.1.1
 ```
 
 ## Usage
@@ -30,18 +30,21 @@ Add view to your layout:
  ```
  ```java
  final CodeView cv = (CodeView)findViewById(R.id.code_view);
+
  //Using HighlightJs
  cv.setSyntaxHighlighter(new HightlightJs())
         .setCode("Your code")
         .setLanguage(HightlightJs.Languages.JAVA)
         .setTheme(HightlightJs.Themes.DRACULA)
+        .setShowLineNumber(true)
         .setTextSize(12)
         .apply();
- //Using Prism.js
+ //Or using Prism.js
  cv.setSyntaxHighlighter(new Prism())
         .setCode("Your code")
         .setLanguage(Prism.Languages.JAVA)
         .setTheme(Prism.Themes.SOLARIZED_LIGHT)
+        .setShowLineNumber(true)
         .setTextSize(12)
         .apply();
  ```
