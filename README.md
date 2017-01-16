@@ -69,11 +69,8 @@ cv.setSyntaxHighlighter(new Rainbow())
        .apply();
  ```
 
- Highlight.js
  ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/1.png)
- Prism.js
  ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/3.png)
- Rainbow
  ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/2.png)
 
 ## LICENSE
