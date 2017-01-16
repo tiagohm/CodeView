@@ -16,8 +16,20 @@ allprojects {
 ```
 Add the dependency:
 ```gradle
-compile 'com.github.tiagohm:CodeView:0.1.1
+compile 'com.github.tiagohm:CodeView:0.1.2
 ```
+
+## Highlighters
+* [HIGHLIGHT.JS](https://highlightjs.org/)
+169 languages and 77 styles
+* [PRISM](http://prismjs.com/)
+120 languages
+* [RAINBOW](https://craig.is/making/rainbows)
+19 languages
+
+## Other Links
+* [https://github.com/Blender3D/rainbow.linenumbers.js](https://github.com/Blender3D/rainbow.linenumbers.js)
+* [https://github.com/wcoder/highlightjs-line-numbers.js/](https://github.com/wcoder/highlightjs-line-numbers.js/)
 
 ## Usage
 
@@ -31,7 +43,7 @@ Add view to your layout:
  ```java
  final CodeView cv = (CodeView)findViewById(R.id.code_view);
 
- //Using HighlightJs
+ //Using Highlight.js
  cv.setSyntaxHighlighter(new HightlightJs())
         .setCode("Your code")
         .setLanguage(HightlightJs.Languages.JAVA)
@@ -47,10 +59,23 @@ Add view to your layout:
         .setShowLineNumber(true)
         .setTextSize(12)
         .apply();
+//Or using Rainbow
+cv.setSyntaxHighlighter(new Rainbow())
+       .setCode("Your code")
+       .setLanguage(Rainbow.Languages.JAVA)
+       .setTheme(Rainbow.Themes.GITHUB)
+       .setShowLineNumber(true)
+       .setTextSize(12)
+       .apply();
  ```
- 
+
+ Highlight.js
+ ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/1.png)
+ Prism.js
  ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/3.png)
- 
+ Rainbow
+ ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/2.png)
+
 ## LICENSE
 Copyright 2016-2017 tiagohm
 
