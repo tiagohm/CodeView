@@ -7,10 +7,12 @@ public class HightlightJs extends SyntaxHighlighter
                     "<html>\n" +
                     "<head>\n" +
                     "<link rel=\"stylesheet\" href=\"%s\" />\n" +
-                    "<style>body, code, pre {margin: 0px !important;}</style>\n" +
-                    "<style>span, code {font-size: %dpx !important; line-height: 1.2 !important;}</style>\n" +
+                    "<style>body {%s}</style>\n" +
+                    "<style>code {%s}</style>\n" +
+                    "<style>pre {%s}</style>\n" +
                     "<script src=\"%s\"></script>\n" +
                     "<script>hljs.initHighlightingOnLoad();</script>" +
+                    "%s" +
                     "</head>\n" +
                     "<body>\n" +
                     "<pre><code class=\"%s\">%s</code></pre>\n" +
@@ -18,6 +20,14 @@ public class HightlightJs extends SyntaxHighlighter
                     "</html>";
     private static final String LANG_PATH = "file:///android_asset/highlightjs/languages/%s.js";
     private static final String JS_PATH = "file:///android_asset/highlightjs/highlight.js";
+    private static final String HLN_PATH = "file:///android_asset/highlightjs/highlightjs-line-number.js";
+    private static String OTHERS_SCRIPTS = "";
+    private static String BODY_CSS = "";
+    private static String PRE_CSS = "";
+    private static String CODE_CSS = "";
+    private static String PRE_CLASS = "";
+    private static String CODE_CLASS = "";
+    private static String CODE_TEXT = "";
 
     public HightlightJs()
     {
@@ -27,11 +37,37 @@ public class HightlightJs extends SyntaxHighlighter
     @Override
     public String getHtmlCode(String code, Language lang, int textSize)
     {
+        BODY_CSS = "margin: 0px !important;";
+        CODE_CSS = "font-size: " + textSize + "px !important; line-height: 1.2 !important;";
+        PRE_CSS = "margin: 0px !important; font-size: " + textSize + "px !important; line-height: 1.2 !important;";
+        CODE_CLASS = lang.getLanguageName();
+        CODE_TEXT = code;
+
+        if(isShowLineNumber())
+        {
+            OTHERS_SCRIPTS = "<style>.hljs-line-numbers {\n" +
+                    "    text-align: right;\n" +
+                    "    border-right: 1px solid #ccc;\n" +
+                    "    color: #999;\n" +
+                    "    -webkit-touch-callout: none;\n" +
+                    "    -webkit-user-select: none;\n" +
+                    "}</style>\n";
+            OTHERS_SCRIPTS += "<script src=\"" + HLN_PATH + "\"></script>\n";
+            OTHERS_SCRIPTS += "<script>hljs.initLineNumbersOnLoad();</script>\n";
+        }
+        else
+        {
+            OTHERS_SCRIPTS = "";
+        }
+
         return String.format(HTML_SCRIPT,
                 getTheme().getPath(),
-                textSize,
+                BODY_CSS,
+                CODE_CSS,
+                PRE_CSS,
                 JS_PATH,
-                lang.getLanguageName(), code);
+                OTHERS_SCRIPTS,
+                CODE_CLASS, CODE_TEXT);
     }
 
     public enum Themes implements Theme
