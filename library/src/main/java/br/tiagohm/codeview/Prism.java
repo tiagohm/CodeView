@@ -7,15 +7,25 @@ public final class Prism extends SyntaxHighlighter
                     "<html>\n" +
                     "<head>\n" +
                     "\t<link href=\"%s\" rel=\"stylesheet\" />\n" +
-                    "<style>body, pre, code {margin: 0px !important;}</style>\n" +
-                    "<style>code, pre {font-size: %dpx !important; line-height: 1.2 !important;}</style>\n" +
+                    "<style>body {%s}</style>\n" +
+                    "<style>code {%s}</style>\n" +
+                    "<style>pre {%s}</style>\n" +
                     "</head>\n" +
                     "<body>\n" +
-                    "<pre><code class=\"language-%s\">%s</code></pre>" +
+                    "<pre><code class=\"%s\">%s</code></pre>" +
                     "\t<script src=\"%s\"></script>\n" +
+                    "%s" +
                     "</body>\n" +
                     "</html>";
     private static final String JS_PATH = "file:///android_asset/prism/prism.js";
+
+    private static String OTHERS_SCRIPTS = "";
+    private static String BODY_CSS = "";
+    private static String PRE_CSS = "";
+    private static String CODE_CSS = "";
+    private static String PRE_CLASS = "";
+    private static String CODE_CLASS = "";
+    private static String CODE_TEXT = "";
 
     public Prism()
     {
@@ -25,11 +35,20 @@ public final class Prism extends SyntaxHighlighter
     @Override
     public final String getHtmlCode(String code, Language lang, int textSize)
     {
+        BODY_CSS = "margin: 0px !important;";
+        CODE_CSS = "font-size: " + textSize + "px !important; line-height: 1.2 !important;";
+        PRE_CSS = "margin: 0px !important; font-size: " + textSize + "px !important; line-height: 1.2 !important;";
+        CODE_CLASS = (isShowLineNumber() ? "line-numbers" : "") + " language-" + lang.getLanguageName();
+        CODE_TEXT = code;
+
         return String.format(HTML_SCRIPT,
                 getTheme().getPath(),
-                textSize,
-                lang.getLanguageName(), code,
-                JS_PATH);
+                BODY_CSS,
+                CODE_CSS,
+                PRE_CSS,
+                CODE_CLASS, CODE_TEXT,
+                JS_PATH,
+                OTHERS_SCRIPTS);
     }
 
     public enum Themes implements Theme

@@ -100,6 +100,26 @@ public class CodeView extends WebView
         return this;
     }
 
+    public CodeView setShowLineNumber(boolean value)
+    {
+        if(mSyntaxHighlighter != null)
+        {
+            mSyntaxHighlighter.setShowLineNumber(value);
+        }
+
+        return this;
+    }
+
+    public CodeView toggleShowLineNumber()
+    {
+        if(mSyntaxHighlighter != null)
+        {
+            mSyntaxHighlighter.setShowLineNumber(!mSyntaxHighlighter.isShowLineNumber());
+        }
+
+        return this;
+    }
+
     public void apply()
     {
         loadDataWithBaseURL("",

@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity
         cv.setCode(JAVA_CODE)
                 .setLanguage(HightlightJs.Languages.JAVA)
                 .setTextSize(12)
+                .setShowLineNumber(true)
                 .apply();
     }
 
@@ -134,6 +135,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     highlighter = 1;
                     cv.setSyntaxHighlighter(sh = new Prism())
+                            .setShowLineNumber(true)
                             .setLanguage(Prism.Languages.JAVA);
                     THEMES = Prism.Themes.values();
                 }
@@ -141,12 +143,16 @@ public class MainActivity extends AppCompatActivity
                 {
                     highlighter = 0;
                     cv.setSyntaxHighlighter(sh = new HightlightJs())
+                            .setShowLineNumber(true)
                             .setLanguage(HightlightJs.Languages.JAVA);
                     THEMES = HightlightJs.Themes.values();
                 }
 
                 themePos = 0;
                 cv.setTheme(THEMES[themePos]).apply();
+                break;
+            case R.id.show_line_number_action:
+                cv.toggleShowLineNumber().apply();
                 break;
         }
 
