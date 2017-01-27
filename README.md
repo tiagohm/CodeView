@@ -16,7 +16,7 @@ allprojects {
 ```
 Add the dependency:
 ```gradle
-compile 'com.github.tiagohm:CodeView:0.1.2
+compile 'com.github.tiagohm:CodeView:0.1.3
 ```
 
 ## Highlighters
@@ -46,7 +46,7 @@ Add view to your layout:
  //Using Highlight.js
  cv.setSyntaxHighlighter(new HightlightJs())
         .setCode("Your code")
-        .setLanguage(HightlightJs.Languages.JAVA)
+        .setLanguage(HightlightJs.Languages.AUTO)
         .setTheme(HightlightJs.Themes.DRACULA)
         .setShowLineNumber(true)
         .setTextSize(12)
