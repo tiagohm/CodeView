@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity
             new HightlightJs(), new Prism(), new Rainbow()
     };
     private int themePos = 0;
-    private int hlPos = 2;
+    private int hlPos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -124,9 +124,9 @@ public class MainActivity extends AppCompatActivity
 
         final CodeView cv = (CodeView)findViewById(R.id.code_view);
 
-        cv.setSyntaxHighlighter(new Rainbow());
+        cv.setSyntaxHighlighter(new HightlightJs());
         cv.setCode(JAVA_CODE)
-                .setLanguage(Rainbow.Languages.JAVA)
+                .setLanguage(HightlightJs.Languages.AUTO)
                 .setTextSize(12)
                 .setShowLineNumber(true)
                 .apply();
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity
                 themePos = ++themePos % SHS[hlPos].getSupportedThemes().length;
                 break;
             case R.id.change_highlighter_action:
-                hlPos  = ++hlPos % SHS.length;
+                hlPos = ++hlPos % SHS.length;
                 themePos = 0;
                 cv.setSyntaxHighlighter(SHS[hlPos])
                         .setShowLineNumber(true);

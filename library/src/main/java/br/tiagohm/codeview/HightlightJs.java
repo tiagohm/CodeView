@@ -184,6 +184,7 @@ public class HightlightJs extends SyntaxHighlighter
 
     public enum Languages implements Language
     {
+        AUTO(""),
         _1C("1c"),
         ABNF("abnf"),
         ACCESS_LOG("accesslog"),
