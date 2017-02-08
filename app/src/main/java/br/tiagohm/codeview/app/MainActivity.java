@@ -9,7 +9,6 @@ import android.widget.Toast;
 import br.tiagohm.codeview.CodeView;
 import br.tiagohm.codeview.HightlightJs;
 import br.tiagohm.codeview.Prism;
-import br.tiagohm.codeview.Rainbow;
 import br.tiagohm.codeview.SyntaxHighlighter;
 import br.tiagohm.codeview.Theme;
 
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity
             "}";
 
     private SyntaxHighlighter[] SHS = new SyntaxHighlighter[]{
-            new HightlightJs(), new Prism(), new Rainbow()
+            new HightlightJs(), new Prism()
     };
     private int themePos = 0;
     private int hlPos = 0;
