@@ -5,6 +5,7 @@ import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -15,6 +16,7 @@ public class CodeView extends WebView
     private String mEscapedCode = "";
     private Language mLanguage;
     private int mTextSize = 14;
+    private OnHighlightListener mListener;
 
     public CodeView(Context context)
     {
@@ -41,6 +43,20 @@ public class CodeView extends WebView
         else
         {
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+    }
+
+    public void setOnHighlightListener(OnHighlightListener listener)
+    {
+        mListener = listener;
+
+        if(mListener != null)
+        {
+            addJavascriptInterface(mListener, "android");
+        }
+        else
+        {
+            removeJavascriptInterface("android");
         }
     }
 
@@ -129,5 +145,14 @@ public class CodeView extends WebView
                 "text/html",
                 "UTF-8",
                 "");
+    }
+
+    public interface OnHighlightListener
+    {
+        @JavascriptInterface
+        void onStartCodeHighlight();
+
+        @JavascriptInterface
+        void onFinishCodeHighlight();
     }
 }
