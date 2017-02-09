@@ -1,6 +1,7 @@
 package br.tiagohm.codeview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
@@ -36,6 +37,11 @@ public class CodeView extends WebView
         getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         getSettings().setLoadWithOverviewMode(true);
 
+        TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs,
+                R.styleable.CodeView, 0, 0);
+
+        enableZoom(attributes.getBoolean(R.styleable.CodeView_zoom_enabled, false));
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
         {
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -44,6 +50,11 @@ public class CodeView extends WebView
         {
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
+    }
+
+    public void enableZoom(boolean enabled)
+    {
+        getSettings().setBuiltInZoomControls(enabled);
     }
 
     public void setOnHighlightListener(OnHighlightListener listener)
