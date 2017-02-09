@@ -16,19 +16,19 @@ allprojects {
 ```
 Add the dependency:
 ```gradle
-compile 'com.github.tiagohm:CodeView:0.1.3
+compile 'com.github.tiagohm:CodeView:0.1.4
 ```
 
 ## Highlighters
-* [HIGHLIGHT.JS](https://highlightjs.org/)
+* [HIGHLIGHT.JS v9.9.0](https://highlightjs.org/)
 169 languages and 77 styles
-* [PRISM](http://prismjs.com/)
-120 languages
-* [RAINBOW](https://craig.is/making/rainbows)
-19 languages
+* ~~[PRISM](http://prismjs.com/)
+120 languages~~ (Removed)
+* ~~[RAINBOW](https://craig.is/making/rainbows)
+19 languages~~ (Removed)
 
 ## Other Links
-* [https://github.com/Blender3D/rainbow.linenumbers.js](https://github.com/Blender3D/rainbow.linenumbers.js)
+* ~~[https://github.com/Blender3D/rainbow.linenumbers.js](https://github.com/Blender3D/rainbow.linenumbers.js)~~
 * [https://github.com/wcoder/highlightjs-line-numbers.js/](https://github.com/wcoder/highlightjs-line-numbers.js/)
 
 ## Usage
@@ -37,6 +37,7 @@ Add view to your layout:
 ```xml
 <br.tiagohm.codeview.CodeView
   android:id="@+id/code_view"
+  app:zoom_enabled="true"
   android:layout_width="match_parent"
   android:layout_height="match_parent"/>
  ```
@@ -46,29 +47,32 @@ Add view to your layout:
  //Using Highlight.js
  cv.setSyntaxHighlighter(new HightlightJs())
         .setCode("Your code")
+        //HightlightJs.Languages.AUTO is slow!!!
         .setLanguage(HightlightJs.Languages.AUTO)
         .setTheme(HightlightJs.Themes.DRACULA)
         .setShowLineNumber(true)
         .setTextSize(12)
         .apply();
- //Or using Prism.js
- cv.setSyntaxHighlighter(new Prism())
-        .setCode("Your code")
-        .setLanguage(Prism.Languages.JAVA)
-        .setTheme(Prism.Themes.SOLARIZED_LIGHT)
-        .setShowLineNumber(true)
-        .setTextSize(12)
-        .apply();
-//Or using Rainbow
-cv.setSyntaxHighlighter(new Rainbow())
-       .setCode("Your code")
-       .setLanguage(Rainbow.Languages.JAVA)
-       .setTheme(Rainbow.Themes.GITHUB)
-       .setShowLineNumber(true)
-       .setTextSize(12)
-       .apply();
+ ```
+
+ Events:
+
+ ```java
+ //Interface
+ new CodeView.OnHighlightListener()
+ {
+       @Override
+       public void onStartCodeHighlight()
+       {   
+          mProgressDialog = ProgressDialog.show(this, null, "Carregando...", true);
+       }
+
+       @Override
+       public void onFinishCodeHighlight()
+       {
+          mProgressDialog.dismiss();
+       }
+}
  ```
 
  ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/1.png)
- ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/3.png)
- ![](https://raw.githubusercontent.com/tiagohm/CodeView/master/2.png)
