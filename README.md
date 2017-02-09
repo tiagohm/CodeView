@@ -62,12 +62,14 @@ Add view to your layout:
  new CodeView.OnHighlightListener()
  {
        @Override
+       @JavascriptInterface
        public void onStartCodeHighlight()
        {   
           mProgressDialog = ProgressDialog.show(this, null, "Carregando...", true);
        }
 
        @Override
+       @JavascriptInterface
        public void onFinishCodeHighlight()
        {
           mProgressDialog.dismiss();
