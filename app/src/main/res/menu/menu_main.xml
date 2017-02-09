@@ -7,11 +7,6 @@
   android:title="CHANGE THEME"
   app:showAsAction="always"/>
  <item
-  android:id="@+id/change_highlighter_action"
-  android:icon="@drawable/highlighter"
-  android:title="CHANGE HIGHLIGHTER"
-  app:showAsAction="always"/>
- <item
   android:id="@+id/show_line_number_action"
   android:icon="@drawable/line_number"
   android:title="SHOW LINE NUMBER"

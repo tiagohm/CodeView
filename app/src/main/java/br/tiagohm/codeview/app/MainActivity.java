@@ -1,18 +1,20 @@
 package br.tiagohm.codeview.app;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
 import br.tiagohm.codeview.CodeView;
 import br.tiagohm.codeview.HightlightJs;
-import br.tiagohm.codeview.Prism;
 import br.tiagohm.codeview.SyntaxHighlighter;
 import br.tiagohm.codeview.Theme;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements CodeView.OnHighlightListener
 {
 
     private static final String JAVA_CODE = "package com.example.android.bluetoothchat;\n" +
@@ -108,12 +110,9 @@ public class MainActivity extends AppCompatActivity
             "        Log.i(TAG, \"Ready\");\n" +
             "    }\n" +
             "}";
-
-    private SyntaxHighlighter[] SHS = new SyntaxHighlighter[]{
-            new HightlightJs(), new Prism()
-    };
+    private final SyntaxHighlighter hjs = new HightlightJs();
     private int themePos = 0;
-    private int hlPos = 0;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -123,8 +122,11 @@ public class MainActivity extends AppCompatActivity
 
         final CodeView cv = (CodeView)findViewById(R.id.code_view);
 
-        cv.setSyntaxHighlighter(new HightlightJs());
+        cv.setOnHighlightListener(this);
+
+        cv.setSyntaxHighlighter(hjs);
         cv.setCode(JAVA_CODE)
+                //Languages.AUTO is slow!!
                 .setLanguage(HightlightJs.Languages.AUTO)
                 .setTextSize(12)
                 .setShowLineNumber(true)
@@ -147,19 +149,10 @@ public class MainActivity extends AppCompatActivity
         switch(id)
         {
             case R.id.change_theme_action:
-                Theme theme = SHS[hlPos].getSupportedThemes()[themePos];
+                Theme theme = hjs.getSupportedThemes()[themePos];
                 cv.setTheme(theme).apply();
                 Toast.makeText(MainActivity.this, ((Enum)theme).name(), Toast.LENGTH_SHORT).show();
-                themePos = ++themePos % SHS[hlPos].getSupportedThemes().length;
-                break;
-            case R.id.change_highlighter_action:
-                hlPos = ++hlPos % SHS.length;
-                themePos = 0;
-                cv.setSyntaxHighlighter(SHS[hlPos])
-                        .setShowLineNumber(true);
-                theme = SHS[hlPos].getSupportedThemes()[themePos];
-                cv.setTheme(theme).apply();
-                Toast.makeText(MainActivity.this, SHS[hlPos].getName(), Toast.LENGTH_SHORT).show();
+                themePos = ++themePos % hjs.getSupportedThemes().length;
                 break;
             case R.id.show_line_number_action:
                 cv.toggleShowLineNumber().apply();
@@ -167,5 +160,24 @@ public class MainActivity extends AppCompatActivity
         }
 
         return true;
+    }
+
+    @Override
+    @JavascriptInterface
+    public void onStartCodeHighlight()
+    {
+        Log.d("TAG", "started");
+        mProgressDialog = ProgressDialog.show(this, null, "Carregando...", true);
+    }
+
+    @Override
+    @JavascriptInterface
+    public void onFinishCodeHighlight()
+    {
+        Log.d("TAG", "finished");
+        if(mProgressDialog != null)
+        {
+            mProgressDialog.dismiss();
+        }
     }
 }
