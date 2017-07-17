@@ -10,8 +10,14 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-public class CodeView extends WebView
-{
+public class CodeView extends WebView {
+    public interface OnHighlightListener {
+        @JavascriptInterface
+        void onStartCodeHighlight();
+
+        @JavascriptInterface
+        void onFinishCodeHighlight();
+    }
     private SyntaxHighlighter mSyntaxHighlighter;
     private String mCode = "";
     private String mEscapedCode = "";
@@ -19,18 +25,15 @@ public class CodeView extends WebView
     private int mTextSize = 14;
     private OnHighlightListener mListener;
 
-    public CodeView(Context context)
-    {
+    public CodeView(Context context) {
         this(context, null);
     }
 
-    public CodeView(Context context, AttributeSet attrs)
-    {
+    public CodeView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CodeView(Context context, AttributeSet attrs, int defStyleAttr)
-    {
+    public CodeView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         getSettings().setJavaScriptEnabled(true);
@@ -42,113 +45,90 @@ public class CodeView extends WebView
 
         enableZoom(attributes.getBoolean(R.styleable.CodeView_zoom_enabled, false));
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
-        else
-        {
+        } else {
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
     }
 
-    public void enableZoom(boolean enabled)
-    {
+    public void enableZoom(boolean enabled) {
         getSettings().setBuiltInZoomControls(enabled);
     }
 
-    public void setOnHighlightListener(OnHighlightListener listener)
-    {
+    public void setOnHighlightListener(OnHighlightListener listener) {
         mListener = listener;
 
-        if(mListener != null)
-        {
+        if (mListener != null) {
             addJavascriptInterface(mListener, "android");
-        }
-        else
-        {
+        } else {
             removeJavascriptInterface("android");
         }
     }
 
-    public SyntaxHighlighter getSyntaxHighlighter()
-    {
+    public SyntaxHighlighter getSyntaxHighlighter() {
         return mSyntaxHighlighter;
     }
 
-    public CodeView setSyntaxHighlighter(SyntaxHighlighter sh)
-    {
+    public CodeView setSyntaxHighlighter(SyntaxHighlighter sh) {
         mSyntaxHighlighter = sh;
         return this;
     }
 
-    public String getCode()
-    {
+    public String getCode() {
         return mCode;
     }
 
-    public CodeView setCode(String code)
-    {
-        if(code == null) code = "";
+    public CodeView setCode(String code) {
+        if (code == null) code = "";
         mCode = code;
         mEscapedCode = Html.escapeHtml(code);
         return this;
     }
 
-    public Language getLanguage()
-    {
+    public Language getLanguage() {
         return mLanguage;
     }
 
-    public CodeView setLanguage(Language language)
-    {
+    public CodeView setLanguage(Language language) {
         mLanguage = language;
         return this;
     }
 
-    public CodeView setTheme(Theme theme)
-    {
-        if(mSyntaxHighlighter != null && theme != null)
-        {
+    public CodeView setTheme(Theme theme) {
+        if (mSyntaxHighlighter != null && theme != null) {
             mSyntaxHighlighter.setTheme(theme);
         }
 
         return this;
     }
 
-    public int getTextSize()
-    {
+    public int getTextSize() {
         return mTextSize;
     }
 
-    public CodeView setTextSize(int size)
-    {
+    public CodeView setTextSize(int size) {
         mTextSize = size;
         return this;
     }
 
-    public CodeView setShowLineNumber(boolean value)
-    {
-        if(mSyntaxHighlighter != null)
-        {
+    public CodeView setShowLineNumber(boolean value) {
+        if (mSyntaxHighlighter != null) {
             mSyntaxHighlighter.setShowLineNumber(value);
         }
 
         return this;
     }
 
-    public CodeView toggleShowLineNumber()
-    {
-        if(mSyntaxHighlighter != null)
-        {
+    public CodeView toggleShowLineNumber() {
+        if (mSyntaxHighlighter != null) {
             mSyntaxHighlighter.setShowLineNumber(!mSyntaxHighlighter.isShowLineNumber());
         }
 
         return this;
     }
 
-    public void apply()
-    {
+    public void apply() {
         loadDataWithBaseURL("",
                 mSyntaxHighlighter != null ?
                         mSyntaxHighlighter.getHtmlCode(mEscapedCode, getLanguage(), getTextSize()) :
@@ -156,14 +136,5 @@ public class CodeView extends WebView
                 "text/html",
                 "UTF-8",
                 "");
-    }
-
-    public interface OnHighlightListener
-    {
-        @JavascriptInterface
-        void onStartCodeHighlight();
-
-        @JavascriptInterface
-        void onFinishCodeHighlight();
     }
 }

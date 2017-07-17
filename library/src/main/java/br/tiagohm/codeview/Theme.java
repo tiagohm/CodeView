@@ -1,6 +1,5 @@
 package br.tiagohm.codeview;
 
-public interface Theme
-{
+public interface Theme {
     String getPath();
 }

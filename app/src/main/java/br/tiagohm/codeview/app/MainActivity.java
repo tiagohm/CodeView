@@ -14,8 +14,7 @@ import br.tiagohm.codeview.HightlightJs;
 import br.tiagohm.codeview.SyntaxHighlighter;
 import br.tiagohm.codeview.Theme;
 
-public class MainActivity extends AppCompatActivity implements CodeView.OnHighlightListener
-{
+public class MainActivity extends AppCompatActivity implements CodeView.OnHighlightListener {
 
     private static final String JAVA_CODE = "package com.example.android.bluetoothchat;\n" +
             "\n" +
@@ -115,12 +114,11 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
     private ProgressDialog mProgressDialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final CodeView cv = (CodeView)findViewById(R.id.code_view);
+        final CodeView cv = (CodeView) findViewById(R.id.code_view);
 
         cv.setOnHighlightListener(this);
 
@@ -134,24 +132,21 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
-        final CodeView cv = (CodeView)findViewById(R.id.code_view);
+        final CodeView cv = (CodeView) findViewById(R.id.code_view);
 
-        switch(id)
-        {
+        switch (id) {
             case R.id.change_theme_action:
                 Theme theme = hjs.getSupportedThemes()[themePos];
                 cv.setTheme(theme).apply();
-                Toast.makeText(MainActivity.this, ((Enum)theme).name(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, ((Enum) theme).name(), Toast.LENGTH_SHORT).show();
                 themePos = ++themePos % hjs.getSupportedThemes().length;
                 break;
             case R.id.show_line_number_action:
@@ -164,19 +159,16 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
 
     @Override
     @JavascriptInterface
-    public void onStartCodeHighlight()
-    {
+    public void onStartCodeHighlight() {
         Log.d("TAG", "started");
         mProgressDialog = ProgressDialog.show(this, null, "Carregando...", true);
     }
 
     @Override
     @JavascriptInterface
-    public void onFinishCodeHighlight()
-    {
+    public void onFinishCodeHighlight() {
         Log.d("TAG", "finished");
-        if(mProgressDialog != null)
-        {
+        if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
     }

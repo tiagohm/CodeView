@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
- xmlns:android="http://schemas.android.com/apk/res/android"
- xmlns:app="http://schemas.android.com/apk/res-auto"
- xmlns:tools="http://schemas.android.com/tools"
- android:id="@+id/activity_main"
- android:layout_width="match_parent"
- android:layout_height="match_parent"
- android:orientation="vertical"
- tools:context="br.tiagohm.codeview.app.MainActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="br.tiagohm.codeview.app.MainActivity">
 
- <br.tiagohm.codeview.CodeView
-  android:id="@+id/code_view"
-  android:layout_width="match_parent"
-  android:layout_height="0dp"
-  android:layout_weight="1"
-  app:zoom_enabled="true">
- </br.tiagohm.codeview.CodeView>
+    <br.tiagohm.codeview.CodeView
+        android:id="@+id/code_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:zoom_enabled="true">
+    </br.tiagohm.codeview.CodeView>
 
 </LinearLayout>

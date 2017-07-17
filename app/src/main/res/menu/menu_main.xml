@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
- <item
-  android:id="@+id/change_theme_action"
-  android:icon="@drawable/change_theme"
-  android:title="CHANGE THEME"
-  app:showAsAction="always"/>
- <item
-  android:id="@+id/show_line_number_action"
-  android:icon="@drawable/line_number"
-  android:title="SHOW LINE NUMBER"
-  app:showAsAction="always"/>
+    <item
+        android:id="@+id/change_theme_action"
+        android:icon="@drawable/change_theme"
+        android:title="CHANGE THEME"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/show_line_number_action"
+        android:icon="@drawable/line_number"
+        android:title="SHOW LINE NUMBER"
+        app:showAsAction="always"/>
 </menu>

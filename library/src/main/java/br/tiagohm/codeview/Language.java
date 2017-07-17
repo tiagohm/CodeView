@@ -1,6 +1,5 @@
 package br.tiagohm.codeview;
 
-public interface Language
-{
+public interface Language {
     String getLanguageName();
 }
