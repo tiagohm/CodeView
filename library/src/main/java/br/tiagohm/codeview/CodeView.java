@@ -15,6 +15,8 @@ public class CodeView extends WebView {
         void onStartCodeHighlight();
 
         void onFinishCodeHighlight();
+
+        void onLanguageDetected(Language language, int relevance);
     }
 
     private String code = "";
@@ -74,6 +76,13 @@ public class CodeView extends WebView {
                     public void onFinishCodeHighlight() {
                         if (onHighlightListener != null) {
                             onHighlightListener.onFinishCodeHighlight();
+                        }
+                    }
+
+                    @JavascriptInterface
+                    public void onLanguageDetected(String name, int relevance) {
+                        if (onHighlightListener != null) {
+                            onHighlightListener.onLanguageDetected(Language.getLanguageByName(name), relevance);
                         }
                     }
                 }, "android");
@@ -201,7 +210,6 @@ public class CodeView extends WebView {
         sb.append("<pre><code class='").append(language.getLanguageName()).append("'>")
                 .append(escapeCode)
                 .append("</code></pre>\n");
-        Log.d("TAG", sb.toString());
         return sb.toString();
     }
 }

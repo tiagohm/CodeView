@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
                 .setOnHighlightListener(this)
                 .setTheme(Theme.AGATE)
                 .setCode(JAVA_CODE)
-                .setLanguage(Language.CPP)
+                .setLanguage(Language.AUTO)
                 .setWrapLine(true)
                 .setFontSize(14)
                 .apply();
@@ -154,6 +154,11 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
+    }
+
+    @Override
+    public void onLanguageDetected(Language language, int relevance) {
+        Toast.makeText(this, "language: " + language + " relevance: " + relevance, Toast.LENGTH_SHORT).show();
     }
 
     private void setHighlightTheme(int pos) {
