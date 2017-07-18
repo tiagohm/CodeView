@@ -2,28 +2,28 @@ package br.tiagohm.codeview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.text.Html;
 import android.util.AttributeSet;
-import android.view.View;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 public class CodeView extends WebView {
+
     public interface OnHighlightListener {
-        @JavascriptInterface
         void onStartCodeHighlight();
 
-        @JavascriptInterface
         void onFinishCodeHighlight();
     }
-    private SyntaxHighlighter mSyntaxHighlighter;
-    private String mCode = "";
-    private String mEscapedCode = "";
-    private Language mLanguage;
-    private int mTextSize = 14;
-    private OnHighlightListener mListener;
+
+    private String code = "";
+    private String escapeCode;
+    private Theme theme;
+    private Language language;
+    private int fontSize = 16;
+    private boolean wrapLine = false;
+    private OnHighlightListener onHighlightListener;
 
     public CodeView(Context context) {
         this(context, null);
@@ -35,106 +35,173 @@ public class CodeView extends WebView {
 
     public CodeView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        //Inicialização.
+        init(context, attrs);
+    }
+
+    private void init(Context context, AttributeSet attrs) {
+        TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs,
+                R.styleable.CodeView, 0, 0);
+        //Define os atributos
+        setWrapLine(attributes.getBoolean(R.styleable.CodeView_cv_wrap_line, false));
+        setFontSize(attributes.getInt(R.styleable.CodeView_cv_font_size, 14));
+        attributes.recycle();
 
         getSettings().setJavaScriptEnabled(true);
         getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         getSettings().setLoadWithOverviewMode(true);
+    }
 
-        TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs,
-                R.styleable.CodeView, 0, 0);
+    /**
+     * Define um listener.
+     */
+    public CodeView setOnHighlightListener(OnHighlightListener listener) {
+        //Definir um listener.
+        if (listener != null) {
+            //Definir um novo listener
+            if (onHighlightListener != listener) {
+                onHighlightListener = listener;
+                //Adiciona o objeto que atenderá os eventos js e disparará o listener definido.
+                addJavascriptInterface(new Object() {
+                    @JavascriptInterface
+                    public void onStartCodeHighlight() {
+                        if (onHighlightListener != null) {
+                            onHighlightListener.onStartCodeHighlight();
+                        }
+                    }
 
-        enableZoom(attributes.getBoolean(R.styleable.CodeView_zoom_enabled, false));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        } else {
-            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    @JavascriptInterface
+                    public void onFinishCodeHighlight() {
+                        if (onHighlightListener != null) {
+                            onHighlightListener.onFinishCodeHighlight();
+                        }
+                    }
+                }, "android");
+            }
         }
-    }
-
-    public void enableZoom(boolean enabled) {
-        getSettings().setBuiltInZoomControls(enabled);
-    }
-
-    public void setOnHighlightListener(OnHighlightListener listener) {
-        mListener = listener;
-
-        if (mListener != null) {
-            addJavascriptInterface(mListener, "android");
-        } else {
+        //Remover o listener.
+        else {
             removeJavascriptInterface("android");
         }
-    }
-
-    public SyntaxHighlighter getSyntaxHighlighter() {
-        return mSyntaxHighlighter;
-    }
-
-    public CodeView setSyntaxHighlighter(SyntaxHighlighter sh) {
-        mSyntaxHighlighter = sh;
         return this;
     }
 
-    public String getCode() {
-        return mCode;
+    public int getFontSize() {
+        return fontSize;
     }
 
+    public CodeView setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+        return this;
+    }
+
+    /**
+     * Obtém o código exibido.
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * Define o código que será exibido.
+     */
     public CodeView setCode(String code) {
         if (code == null) code = "";
-        mCode = code;
-        mEscapedCode = Html.escapeHtml(code);
+        this.code = code;
+        this.escapeCode = Html.escapeHtml(code);
         return this;
     }
 
-    public Language getLanguage() {
-        return mLanguage;
+    /**
+     * Obtém o tema.
+     */
+    public Theme getTheme() {
+        return theme;
     }
 
-    public CodeView setLanguage(Language language) {
-        mLanguage = language;
-        return this;
-    }
-
+    /**
+     * Define o tema.
+     */
     public CodeView setTheme(Theme theme) {
-        if (mSyntaxHighlighter != null && theme != null) {
-            mSyntaxHighlighter.setTheme(theme);
-        }
-
+        this.theme = theme;
         return this;
     }
 
-    public int getTextSize() {
-        return mTextSize;
+    /**
+     * Obtém a linguagem.
+     */
+    public Language getLanguage() {
+        return language;
     }
 
-    public CodeView setTextSize(int size) {
-        mTextSize = size;
+    /**
+     * Define a linguagem.
+     */
+    public CodeView setLanguage(Language language) {
+        this.language = language;
         return this;
     }
 
-    public CodeView setShowLineNumber(boolean value) {
-        if (mSyntaxHighlighter != null) {
-            mSyntaxHighlighter.setShowLineNumber(value);
-        }
+    /**
+     * Verifica se está aplicando a quebra de linha.
+     */
+    public boolean isWrapLine() {
+        return wrapLine;
+    }
 
+    /**
+     * Define se aplicará a quebra de linha.
+     */
+    public CodeView setWrapLine(boolean wrapLine) {
+        this.wrapLine = wrapLine;
         return this;
     }
 
-    public CodeView toggleShowLineNumber() {
-        if (mSyntaxHighlighter != null) {
-            mSyntaxHighlighter.setShowLineNumber(!mSyntaxHighlighter.isShowLineNumber());
-        }
-
-        return this;
-    }
-
+    /**
+     * Aplica os atributos e exibe o código.
+     */
     public void apply() {
         loadDataWithBaseURL("",
-                mSyntaxHighlighter != null ?
-                        mSyntaxHighlighter.getHtmlCode(mEscapedCode, getLanguage(), getTextSize()) :
-                        mEscapedCode,
+                toHtml(),
                 "text/html",
                 "UTF-8",
                 "");
+    }
+
+    private String toHtml() {
+        StringBuilder sb = new StringBuilder();
+        //html
+        sb.append("<!DOCTYPE html>\n")
+                .append("<html>\n")
+                .append("<head>\n");
+        //style
+        sb.append("<link rel='stylesheet' href='").append(getTheme().getPath()).append("' />\n");
+        sb.append("<style>\n");
+        //body
+        sb.append("body {");
+        sb.append("font-size:").append(String.format("%dpx;", getFontSize()));
+        sb.append("margin: 0px; line-height: 1.2;");
+        sb.append("}\n");
+        //.hljs
+        sb.append(".hljs {");
+        sb.append("}");
+        sb.append("pre {");
+        sb.append("margin: 0px;");
+        if (isWrapLine()) {
+            sb.append("word-wrap: break-word; white-space: pre-wrap; word-break: break-all;");
+        }
+        sb.append("}");
+        sb.append("</style>");
+        //scripts
+        sb.append("<script src='file:///android_asset/highlightjs/highlight.js'></script>");
+        sb.append("<script>hljs.initHighlightingOnLoad();</script>");
+        sb.append("</head>");
+        //code
+        sb.append("<body>");
+        sb.append("<pre><code class='").append(language.getLanguageName()).append("'>")
+                .append(escapeCode)
+                .append("</code></pre>\n");
+        Log.d("TAG", sb.toString());
+        return sb.toString();
     }
 }

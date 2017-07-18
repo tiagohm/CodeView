@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CodeView">
-        <attr name="zoom_enabled" format="boolean"/>
+        <attr name="cv_wrap_line" format="boolean"/>
+        <attr name="cv_font_size" format="integer"/>
     </declare-styleable>
 </resources>

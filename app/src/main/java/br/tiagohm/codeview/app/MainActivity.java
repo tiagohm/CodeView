@@ -3,15 +3,12 @@ package br.tiagohm.codeview.app;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
 import br.tiagohm.codeview.CodeView;
-import br.tiagohm.codeview.HightlightJs;
-import br.tiagohm.codeview.SyntaxHighlighter;
+import br.tiagohm.codeview.Language;
 import br.tiagohm.codeview.Theme;
 
 public class MainActivity extends AppCompatActivity implements CodeView.OnHighlightListener {
@@ -109,25 +106,25 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
             "        Log.i(TAG, \"Ready\");\n" +
             "    }\n" +
             "}";
-    private final SyntaxHighlighter hjs = new HightlightJs();
-    private int themePos = 0;
+
+    CodeView mCodeView;
     private ProgressDialog mProgressDialog;
+    private int themePos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final CodeView cv = (CodeView) findViewById(R.id.code_view);
+        mCodeView = (CodeView) findViewById(R.id.code_view);
 
-        cv.setOnHighlightListener(this);
-
-        cv.setSyntaxHighlighter(hjs);
-        cv.setCode(JAVA_CODE)
-                //Languages.AUTO is slow!!
-                .setLanguage(HightlightJs.Languages.AUTO)
-                .setTextSize(12)
-                .setShowLineNumber(true)
+        mCodeView.setOnHighlightListener(this)
+                .setOnHighlightListener(this)
+                .setTheme(Theme.AGATE)
+                .setCode(JAVA_CODE)
+                .setLanguage(Language.CPP)
+                .setWrapLine(true)
+                .setFontSize(14)
                 .apply();
     }
 
@@ -139,37 +136,28 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final int id = item.getItemId();
-        final CodeView cv = (CodeView) findViewById(R.id.code_view);
-
-        switch (id) {
+        switch (item.getItemId()) {
             case R.id.change_theme_action:
-                Theme theme = hjs.getSupportedThemes()[themePos];
-                cv.setTheme(theme).apply();
-                Toast.makeText(MainActivity.this, ((Enum) theme).name(), Toast.LENGTH_SHORT).show();
-                themePos = ++themePos % hjs.getSupportedThemes().length;
-                break;
-            case R.id.show_line_number_action:
-                cv.toggleShowLineNumber().apply();
-                break;
+                setHighlightTheme(++themePos);
+                return true;
         }
-
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    @JavascriptInterface
     public void onStartCodeHighlight() {
-        Log.d("TAG", "started");
         mProgressDialog = ProgressDialog.show(this, null, "Carregando...", true);
     }
 
     @Override
-    @JavascriptInterface
     public void onFinishCodeHighlight() {
-        Log.d("TAG", "finished");
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
+    }
+
+    private void setHighlightTheme(int pos) {
+        mCodeView.setTheme(Theme.ALL.get(pos)).apply();
+        Toast.makeText(this, Theme.ALL.get(pos).getName(), Toast.LENGTH_SHORT).show();
     }
 }
