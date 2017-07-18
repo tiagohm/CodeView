@@ -23,6 +23,7 @@ compile 'com.github.tiagohm:CodeView:LATEST-VERSION
 * 176 languages and 79 styles
 * Wrap Line
 * Language Detection
+* Zoom (Pinch gesture)
 
 ## Usage
 
@@ -33,7 +34,8 @@ Add view to your layout:
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cv_font_size="14"
-        app:cv_wrap_line="true">
+        app:cv_wrap_line="true"
+        app:cv_zoom_enable="true">
     </br.tiagohm.codeview.CodeView>
  ```
  ```java
@@ -46,10 +48,11 @@ Add view to your layout:
                 .setLanguage(Language.AUTO)
                 .setWrapLine(true)
                 .setFontSize(14)
+                .setZoomEnabled(true)
                 .apply();
  ```
 
- Events:
+ Listeners:
 
  ```java
  //Interface
@@ -72,6 +75,11 @@ Add view to your layout:
   @Override
   public void onLanguageDetected(Language language, int relevance) {
    Toast.makeText(this, "language: " + language + " relevance: " + relevance, Toast.LENGTH_SHORT).show();
+  }
+
+  @Override
+  public void onFontSizeChanged(int sizeInPx) {
+   Log.d("TAG", "font-size: " + sizeInPx + "px");
   }
 }
  ```
