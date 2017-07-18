@@ -3,5 +3,6 @@
     <declare-styleable name="CodeView">
         <attr name="cv_wrap_line" format="boolean"/>
         <attr name="cv_font_size" format="integer"/>
+        <attr name="cv_zoom_enable" format="boolean"/>
     </declare-styleable>
 </resources>

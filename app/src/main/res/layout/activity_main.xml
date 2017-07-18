@@ -15,7 +15,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         app:cv_font_size="14"
-        app:cv_wrap_line="true">
+        app:cv_wrap_line="true"
+        app:cv_zoom_enable="true">
     </br.tiagohm.codeview.CodeView>
 
 </LinearLayout>

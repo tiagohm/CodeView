@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.Html;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -17,15 +19,19 @@ public class CodeView extends WebView {
         void onFinishCodeHighlight();
 
         void onLanguageDetected(Language language, int relevance);
+
+        void onFontSizeChanged(int sizeInPx);
     }
 
     private String code = "";
     private String escapeCode;
     private Theme theme;
     private Language language;
-    private int fontSize = 16;
+    private float fontSize = 16;
     private boolean wrapLine = false;
     private OnHighlightListener onHighlightListener;
+    private ScaleGestureDetector pinchDetector;
+    private boolean zoomEnabled = false;
 
     public CodeView(Context context) {
         this(context, null);
@@ -41,14 +47,26 @@ public class CodeView extends WebView {
         init(context, attrs);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (isZoomEnabled()) {
+            pinchDetector.onTouchEvent(event);
+        }
+        return super.onTouchEvent(event);
+    }
+
     private void init(Context context, AttributeSet attrs) {
         TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs,
                 R.styleable.CodeView, 0, 0);
         //Define os atributos
         setWrapLine(attributes.getBoolean(R.styleable.CodeView_cv_wrap_line, false));
         setFontSize(attributes.getInt(R.styleable.CodeView_cv_font_size, 14));
+        setZoomEnabled(attributes.getBoolean(R.styleable.CodeView_cv_zoom_enable, false));
         attributes.recycle();
 
+        pinchDetector = new ScaleGestureDetector(context, new PinchListener());
+
+        setWebChromeClient(new WebChromeClient());
         getSettings().setJavaScriptEnabled(true);
         getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         getSettings().setLoadWithOverviewMode(true);
@@ -95,12 +113,22 @@ public class CodeView extends WebView {
         return this;
     }
 
-    public int getFontSize() {
+    /**
+     * Obtém o tamanho da fonte do texto em pixels.
+     */
+    public float getFontSize() {
         return fontSize;
     }
 
-    public CodeView setFontSize(int fontSize) {
+    /**
+     * Define o tamanho da fonte do texto em pixels.
+     */
+    public CodeView setFontSize(float fontSize) {
+        if (fontSize < 8) fontSize = 8;
         this.fontSize = fontSize;
+        if (onHighlightListener != null) {
+            onHighlightListener.onFontSizeChanged((int) fontSize);
+        }
         return this;
     }
 
@@ -167,6 +195,21 @@ public class CodeView extends WebView {
     }
 
     /**
+     * Verifica se o zoom está habilitado.
+     */
+    public boolean isZoomEnabled() {
+        return zoomEnabled;
+    }
+
+    /**
+     * Define que o zoom estará habilitado ou não.
+     */
+    public CodeView setZoomEnabled(boolean zoomEnabled) {
+        this.zoomEnabled = zoomEnabled;
+        return this;
+    }
+
+    /**
      * Aplica os atributos e exibe o código.
      */
     public void apply() {
@@ -188,7 +231,7 @@ public class CodeView extends WebView {
         sb.append("<style>\n");
         //body
         sb.append("body {");
-        sb.append("font-size:").append(String.format("%dpx;", getFontSize()));
+        sb.append("font-size:").append(String.format("%dpx;", (int) getFontSize()));
         sb.append("margin: 0px; line-height: 1.2;");
         sb.append("}\n");
         //.hljs
@@ -211,5 +254,50 @@ public class CodeView extends WebView {
                 .append(escapeCode)
                 .append("</code></pre>\n");
         return sb.toString();
+    }
+
+    private void changeFontSize(int sizeInPx) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            evaluateJavascript("javascript:document.body.style.fontSize = '" + sizeInPx + "px'", null);
+        } else {
+            loadUrl("javascript:document.body.style.fontSize = '" + sizeInPx + "px'");
+        }
+    }
+
+    /**
+     * Eventos de pinça.
+     */
+    private class PinchListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        private float fontSize;
+        private int oldFontSize;
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            fontSize = getFontSize();
+            oldFontSize = (int) fontSize;
+            return super.onScaleBegin(detector);
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            CodeView.this.fontSize = fontSize;
+            super.onScaleEnd(detector);
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            fontSize = getFontSize() * detector.getScaleFactor();
+            if (fontSize >= 8) {
+                changeFontSize((int) fontSize);
+                if (onHighlightListener != null && oldFontSize != (int) fontSize) {
+                    onHighlightListener.onFontSizeChanged((int) fontSize);
+                }
+                oldFontSize = (int) fontSize;
+            } else {
+                fontSize = 8;
+            }
+            return false;
+        }
     }
 }

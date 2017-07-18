@@ -3,6 +3,7 @@ package br.tiagohm.codeview.app;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
                 .setLanguage(Language.AUTO)
                 .setWrapLine(true)
                 .setFontSize(14)
+                .setZoomEnabled(true)
                 .apply();
     }
 
@@ -159,6 +161,11 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
     @Override
     public void onLanguageDetected(Language language, int relevance) {
         Toast.makeText(this, "language: " + language + " relevance: " + relevance, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFontSizeChanged(int sizeInPx) {
+        Log.d("TAG", "font-size: " + sizeInPx + "px");
     }
 
     private void setHighlightTheme(int pos) {
