@@ -1,10 +1,9 @@
 # CodeView
 ### Android Code Highlighter
 
-## Download
-
 [![](https://jitpack.io/v/tiagohm/CodeView.svg)](https://jitpack.io/#tiagohm/CodeView)
 
+## Install
 Add it in your root `build.gradle` at the end of repositories:
 ```gradle
 allprojects {
@@ -16,43 +15,38 @@ allprojects {
 ```
 Add the dependency:
 ```gradle
-compile 'com.github.tiagohm:CodeView:0.1.4
+compile 'com.github.tiagohm:CodeView:LATEST-VERSION
 ```
 
-## Highlighters
-* [HIGHLIGHT.JS v9.9.0](https://highlightjs.org/)
-169 languages and 77 styles
-* ~~[PRISM](http://prismjs.com/)
-120 languages~~ (Removed)
-* ~~[RAINBOW](https://craig.is/making/rainbows)
-19 languages~~ (Removed)
-
-## Other Links
-* ~~[https://github.com/Blender3D/rainbow.linenumbers.js](https://github.com/Blender3D/rainbow.linenumbers.js)~~
-* [https://github.com/wcoder/highlightjs-line-numbers.js/](https://github.com/wcoder/highlightjs-line-numbers.js/)
+## Features
+* Powered by Highlight.js
+* 176 languages and 79 styles
+* Wrap Line
+* Language Detection
 
 ## Usage
 
 Add view to your layout:
 ```xml
 <br.tiagohm.codeview.CodeView
-  android:id="@+id/code_view"
-  app:zoom_enabled="true"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"/>
+        android:id="@+id/codeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cv_font_size="14"
+        app:cv_wrap_line="true">
+    </br.tiagohm.codeview.CodeView>
  ```
  ```java
- final CodeView cv = (CodeView)findViewById(R.id.code_view);
+ mCodeView = (CodeView)findViewById(R.id.codeView);
 
- //Using Highlight.js
- cv.setSyntaxHighlighter(new HightlightJs())
-        .setCode("Your code")
-        //HightlightJs.Languages.AUTO is slow!!!
-        .setLanguage(HightlightJs.Languages.AUTO)
-        .setTheme(HightlightJs.Themes.DRACULA)
-        .setShowLineNumber(true)
-        .setTextSize(12)
-        .apply();
+ mCodeView.setOnHighlightListener(this)
+                .setOnHighlightListener(this)
+                .setTheme(Theme.AGATE)
+                .setCode(YOUR_CODE)
+                .setLanguage(Language.AUTO)
+                .setWrapLine(true)
+                .setFontSize(14)
+                .apply();
  ```
 
  Events:
@@ -61,19 +55,24 @@ Add view to your layout:
  //Interface
  new CodeView.OnHighlightListener()
  {
-       @Override
-       @JavascriptInterface
-       public void onStartCodeHighlight()
-       {   
-          mProgressDialog = ProgressDialog.show(this, null, "Carregando...", true);
-       }
+  @Override
+  public void onStartCodeHighlight()
+  {   
+    mProgressDialog = ProgressDialog.show(this, null, "Carregando...", true);
+  }
 
-       @Override
-       @JavascriptInterface
-       public void onFinishCodeHighlight()
-       {
-          mProgressDialog.dismiss();
-       }
+  @Override
+  public void onFinishCodeHighlight()
+  {
+    if (mProgressDialog != null) {
+      mProgressDialog.dismiss();
+    }
+  }
+
+  @Override
+  public void onLanguageDetected(Language language, int relevance) {
+   Toast.makeText(this, "language: " + language + " relevance: " + relevance, Toast.LENGTH_SHORT).show();
+  }
 }
  ```
 
