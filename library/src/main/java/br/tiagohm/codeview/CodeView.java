@@ -2,6 +2,9 @@ package br.tiagohm.codeview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -10,6 +13,10 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CodeView extends WebView {
 
@@ -32,6 +39,9 @@ public class CodeView extends WebView {
     private OnHighlightListener onHighlightListener;
     private ScaleGestureDetector pinchDetector;
     private boolean zoomEnabled = false;
+    private boolean showLineNumber = false;
+    private int startLineNumber = 1;
+    private int lineCount = 0;
 
     public CodeView(Context context) {
         this(context, null);
@@ -62,6 +72,8 @@ public class CodeView extends WebView {
         setWrapLine(attributes.getBoolean(R.styleable.CodeView_cv_wrap_line, false));
         setFontSize(attributes.getInt(R.styleable.CodeView_cv_font_size, 14));
         setZoomEnabled(attributes.getBoolean(R.styleable.CodeView_cv_zoom_enable, false));
+        setShowLineNumber(attributes.getBoolean(R.styleable.CodeView_cv_show_line_number, false));
+        setStartLineNumber(attributes.getInt(R.styleable.CodeView_cv_start_line_number, 1));
         attributes.recycle();
 
         pinchDetector = new ScaleGestureDetector(context, new PinchListener());
@@ -70,6 +82,10 @@ public class CodeView extends WebView {
         getSettings().setJavaScriptEnabled(true);
         getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         getSettings().setLoadWithOverviewMode(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
     }
 
     /**
@@ -93,6 +109,13 @@ public class CodeView extends WebView {
                     @JavascriptInterface
                     public void onFinishCodeHighlight() {
                         if (onHighlightListener != null) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fillLineNumbers();
+                                    showHideLineNumber(isShowLineNumber());
+                                }
+                            });
                             onHighlightListener.onFinishCodeHighlight();
                         }
                     }
@@ -210,6 +233,52 @@ public class CodeView extends WebView {
     }
 
     /**
+     * Verifica se o número da linha está sendo exibido.
+     */
+    public boolean isShowLineNumber() {
+        return showLineNumber;
+    }
+
+    /**
+     * Define a visibilidade do número da linha.
+     */
+    public CodeView setShowLineNumber(boolean showLineNumber) {
+        this.showLineNumber = showLineNumber;
+        return this;
+    }
+
+    /**
+     * Obtém o número da primeira linha.
+     */
+    public int getStartLineNumber() {
+        return startLineNumber;
+    }
+
+    /**
+     * Define o número da primeira linha.
+     */
+    public CodeView setStartLineNumber(int startLineNumber) {
+        if (startLineNumber < 0) startLineNumber = 1;
+        this.startLineNumber = startLineNumber;
+        return this;
+    }
+
+    /**
+     * Obtém a quantidade de linhas no código.
+     */
+    public int getLineCount() {
+        return lineCount;
+    }
+
+    /**
+     * Exibe ou oculta o número da linha.
+     */
+    public void toggleLineNumber() {
+        showLineNumber = !showLineNumber;
+        showHideLineNumber(showLineNumber);
+    }
+
+    /**
      * Aplica os atributos e exibe o código.
      */
     public void apply() {
@@ -236,13 +305,23 @@ public class CodeView extends WebView {
         sb.append("}\n");
         //.hljs
         sb.append(".hljs {");
-        sb.append("}");
+        sb.append("}\n");
+        //pre
         sb.append("pre {");
-        sb.append("margin: 0px;");
+        sb.append("margin: 0px; position: relative;");
+        sb.append("}\n");
+        //line
         if (isWrapLine()) {
+            sb.append("td.line {");
             sb.append("word-wrap: break-word; white-space: pre-wrap; word-break: break-all;");
+            sb.append("}\n");
         }
-        sb.append("}");
+        //Outros
+        sb.append("table, td, tr {");
+        sb.append("margin: 0px; padding: 0px;");
+        sb.append("}\n");
+        sb.append("code > span { display: none; }");
+        sb.append("td.ln { text-align: right; padding-right: 2px; }");
         sb.append("</style>");
         //scripts
         sb.append("<script src='file:///android_asset/highlightjs/highlight.js'></script>");
@@ -251,17 +330,50 @@ public class CodeView extends WebView {
         //code
         sb.append("<body>");
         sb.append("<pre><code class='").append(language.getLanguageName()).append("'>")
-                .append(escapeCode)
+                .append(insertLineNumber(escapeCode))
                 .append("</code></pre>\n");
         return sb.toString();
     }
 
-    private void changeFontSize(int sizeInPx) {
+    private void executeJavaScript(String js) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            evaluateJavascript("javascript:document.body.style.fontSize = '" + sizeInPx + "px'", null);
+            evaluateJavascript("javascript:" + js, null);
         } else {
-            loadUrl("javascript:document.body.style.fontSize = '" + sizeInPx + "px'");
+            loadUrl("javascript:" + js);
         }
+    }
+
+    private void changeFontSize(int sizeInPx) {
+        executeJavaScript("document.body.style.fontSize = '" + sizeInPx + "px'");
+    }
+
+    private void fillLineNumbers() {
+        executeJavaScript("var i; var x = document.querySelectorAll('td.ln'); for(i = 0; i < x.length; i++) {x[i].innerHTML = x[i].getAttribute('line');}");
+    }
+
+    private void showHideLineNumber(boolean show) {
+        executeJavaScript(String.format(Locale.ENGLISH,
+                "var i; var x = document.querySelectorAll('td.ln'); for(i = 0; i < x.length; i++) {x[i].style.display = %s;}",
+                show ? "''" : "'none'"));
+    }
+
+    private String insertLineNumber(String code) {
+        Matcher m = Pattern.compile("(.*?)&#10;").matcher(code);
+        StringBuffer sb = new StringBuffer();
+        //Posição atual da linha.
+        int pos = getStartLineNumber();
+        //Quantidade de linhas.
+        lineCount = 0;
+        //Para cada linha encontrada, encapsulá-la dentro uma linha de uma tabela.
+        while (m.find()) {
+            m.appendReplacement(sb,
+                    String.format(Locale.ENGLISH,
+                            "<tr><td line='%d' class='hljs-number ln'></td><td class='line'>$1 </td></tr>&#10;",
+                            pos++));
+            lineCount++;
+        }
+
+        return "<table>\n" + sb.toString().trim() + "</table>\n";
     }
 
     /**

@@ -71,6 +71,24 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
             "    }\n" +
             "\n" +
             "    @Override\n" +
+            "    public boolean onPrepareOptionsMenu(Menu menu) {\n" +
+            "        MenuItem logToggle = menu.findItem(R.id.menu_toggle_log);\n" +
+            "        logToggle.setVisible(findViewById(R.id.sample_output) instanceof ViewAnimator);\n" +
+            "        logToggle.setTitle(mLogShown ? R.string.sample_hide_log : R.string.sample_show_log);\n" +
+            "\n" +
+            "        return super.onPrepareOptionsMenu(menu);\n" +
+            "    }\n" +
+            "\n" +
+            "    @Override\n" +
+            "    public boolean onPrepareOptionsMenu(Menu menu) {\n" +
+            "        MenuItem logToggle = menu.findItem(R.id.menu_toggle_log);\n" +
+            "        logToggle.setVisible(findViewById(R.id.sample_output) instanceof ViewAnimator);\n" +
+            "        logToggle.setTitle(mLogShown ? R.string.sample_hide_log : R.string.sample_show_log);\n" +
+            "\n" +
+            "        return super.onPrepareOptionsMenu(menu);\n" +
+            "    }\n" +
+            "\n" +
+            "    @Override\n" +
             "    public boolean onOptionsItemSelected(MenuItem item) {\n" +
             "        switch(item.getItemId()) {\n" +
             "            case R.id.menu_toggle_log:\n" +
@@ -127,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
                 .setWrapLine(true)
                 .setFontSize(14)
                 .setZoomEnabled(true)
+                .setShowLineNumber(true)
+                .setStartLineNumber(1)
                 .apply();
     }
 
@@ -142,6 +162,9 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
             case R.id.change_theme_action:
                 setHighlightTheme(++themePos);
                 return true;
+            case R.id.show_line_number_action:
+                mCodeView.toggleLineNumber();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -156,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
+        Toast.makeText(this, "line count: " + mCodeView.getLineCount(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

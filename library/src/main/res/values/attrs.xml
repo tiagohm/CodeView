@@ -4,5 +4,7 @@
         <attr name="cv_wrap_line" format="boolean"/>
         <attr name="cv_font_size" format="integer"/>
         <attr name="cv_zoom_enable" format="boolean"/>
+        <attr name="cv_show_line_number" format="boolean"/>
+        <attr name="cv_start_line_number" format="integer"/>
     </declare-styleable>
 </resources>
