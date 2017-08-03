@@ -24,6 +24,11 @@ compile 'com.github.tiagohm:CodeView:LATEST-VERSION
 * Wrap Line
 * Language Detection
 * Zoom (Pinch gesture)
+* Line Number
+* Line Count
+* Highlight current line (by click/tap)
+* Highlight line
+* Tap event of lines (get line number and your content)
 
 ## Usage
 
@@ -34,6 +39,9 @@ Add view to your layout:
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cv_font_size="14"
+        app:cv_highlight_line_number="36"
+        app:cv_show_line_number="true"
+        app:cv_start_line_number="0"
         app:cv_wrap_line="true"
         app:cv_zoom_enable="true">
     </br.tiagohm.codeview.CodeView>
@@ -42,15 +50,24 @@ Add view to your layout:
  mCodeView = (CodeView)findViewById(R.id.codeView);
 
  mCodeView.setOnHighlightListener(this)
-                .setOnHighlightListener(this)
-                .setTheme(Theme.AGATE)
-                .setCode(YOUR_CODE)
-                .setLanguage(Language.AUTO)
-                .setWrapLine(true)
-                .setFontSize(14)
-                .setZoomEnabled(true)
-                .apply();
+       .setOnHighlightListener(this)
+       .setTheme(Theme.AGATE)
+       .setCode(JAVA_CODE)
+       .setLanguage(Language.JAVA)
+       .setWrapLine(true)
+       .setFontSize(14)
+       .setZoomEnabled(true)
+       .setShowLineNumber(true)
+       .setStartLineNumber(9000)
+       .apply();
  ```
+
+## Other Methods
+```java
+mCodeView.highlightLineNumber(10);
+mCodeView.toggleLineNumber();
+mCodeView.getLineCount();
+```
 
  Listeners:
 
@@ -80,6 +97,11 @@ Add view to your layout:
   @Override
   public void onFontSizeChanged(int sizeInPx) {
    Log.d("TAG", "font-size: " + sizeInPx + "px");
+  }
+
+  @Override
+  public void onLineClicked(int lineNumber, String content) {
+    Toast.makeText(this, "line: " + lineNumber + " html: " + content, Toast.LENGTH_SHORT).show();
   }
 }
  ```
