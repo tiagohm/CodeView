@@ -192,6 +192,11 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
         Log.d("TAG", "font-size: " + sizeInPx + "px");
     }
 
+    @Override
+    public void onLineClicked(int lineNumber, String content) {
+        Toast.makeText(this, "line: " + lineNumber + " html: " + content, Toast.LENGTH_SHORT).show();
+    }
+
     private void setHighlightTheme(int pos) {
         mCodeView.setTheme(Theme.ALL.get(pos)).apply();
         Toast.makeText(this, Theme.ALL.get(pos).getName(), Toast.LENGTH_SHORT).show();

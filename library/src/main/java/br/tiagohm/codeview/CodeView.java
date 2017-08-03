@@ -28,6 +28,8 @@ public class CodeView extends WebView {
         void onLanguageDetected(Language language, int relevance);
 
         void onFontSizeChanged(int sizeInPx);
+
+        void onLineClicked(int lineNumber, String content);
     }
 
     private String code = "";
@@ -124,6 +126,13 @@ public class CodeView extends WebView {
                     public void onLanguageDetected(String name, int relevance) {
                         if (onHighlightListener != null) {
                             onHighlightListener.onLanguageDetected(Language.getLanguageByName(name), relevance);
+                        }
+                    }
+
+                    @JavascriptInterface
+                    public void onLineClicked(int lineNumber, String content) {
+                        if (onHighlightListener != null) {
+                            onHighlightListener.onLineClicked(lineNumber, content);
                         }
                     }
                 }, "android");
@@ -370,8 +379,9 @@ public class CodeView extends WebView {
         while (m.find()) {
             m.appendReplacement(sb,
                     String.format(Locale.ENGLISH,
-                            "<tr><td line='%d' class='hljs-number ln'></td><td class='line'>$1 </td></tr>&#10;",
-                            pos++));
+                            "<tr><td line='%d' class='hljs-number ln'></td><td onclick='android.onLineClicked(%d, this.textContent);' class='line'>$1 </td></tr>&#10;",
+                            pos, pos));
+            pos++;
             lineCount++;
         }
 
