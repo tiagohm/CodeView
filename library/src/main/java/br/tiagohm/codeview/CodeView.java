@@ -322,6 +322,8 @@ public class CodeView extends WebView {
         sb.append("}\n");
         sb.append("code > span { display: none; }");
         sb.append("td.ln { text-align: right; padding-right: 2px; }");
+        sb.append("td.line:hover span {background: #661d76; color: #fff;}");
+        sb.append("td.line:hover {background: #661d76; color: #fff; border-radius: 2px;}");
         sb.append("</style>");
         //scripts
         sb.append("<script src='file:///android_asset/highlightjs/highlight.js'></script>");
