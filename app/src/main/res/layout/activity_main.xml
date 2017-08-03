@@ -15,6 +15,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         app:cv_font_size="14"
+        app:cv_highlight_line_number="36"
         app:cv_show_line_number="true"
         app:cv_start_line_number="0"
         app:cv_wrap_line="true"

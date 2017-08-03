@@ -44,6 +44,7 @@ public class CodeView extends WebView {
     private boolean showLineNumber = false;
     private int startLineNumber = 1;
     private int lineCount = 0;
+    private int highlightLineNumber = -1;
 
     public CodeView(Context context) {
         this(context, null);
@@ -76,6 +77,7 @@ public class CodeView extends WebView {
         setZoomEnabled(attributes.getBoolean(R.styleable.CodeView_cv_zoom_enable, false));
         setShowLineNumber(attributes.getBoolean(R.styleable.CodeView_cv_show_line_number, false));
         setStartLineNumber(attributes.getInt(R.styleable.CodeView_cv_start_line_number, 1));
+        highlightLineNumber = attributes.getInt(R.styleable.CodeView_cv_highlight_line_number, -1);
         attributes.recycle();
 
         pinchDetector = new ScaleGestureDetector(context, new PinchListener());
@@ -116,6 +118,7 @@ public class CodeView extends WebView {
                                 public void run() {
                                     fillLineNumbers();
                                     showHideLineNumber(isShowLineNumber());
+                                    highlightLineNumber(getHighlightLineNumber());
                                 }
                             });
                             onHighlightListener.onFinishCodeHighlight();
@@ -333,6 +336,8 @@ public class CodeView extends WebView {
         sb.append("td.ln { text-align: right; padding-right: 2px; }");
         sb.append("td.line:hover span {background: #661d76; color: #fff;}");
         sb.append("td.line:hover {background: #661d76; color: #fff; border-radius: 2px;}");
+        sb.append("td.destacado {background: #ffda11; color: #000; border-radius: 2px;}");
+        sb.append("td.destacado span {background: #ffda11; color: #000;}");
         sb.append("</style>");
         //scripts
         sb.append("<script src='file:///android_asset/highlightjs/highlight.js'></script>");
@@ -368,6 +373,20 @@ public class CodeView extends WebView {
                 show ? "''" : "'none'"));
     }
 
+    public int getHighlightLineNumber() {
+        return highlightLineNumber;
+    }
+
+    public void highlightLineNumber(int lineNumber) {
+        this.highlightLineNumber = lineNumber;
+        executeJavaScript(String.format(Locale.ENGLISH,
+                "var x = document.querySelectorAll('.destacado'); if(x && x.length == 1) x[0].classList.remove('destacado');"));
+        if (lineNumber >= 0) {
+            executeJavaScript(String.format(Locale.ENGLISH,
+                    "var x = document.querySelectorAll(\"td.line[line='%d']\"); if(x && x.length == 1) x[0].classList.add('destacado');", lineNumber));
+        }
+    }
+
     private String insertLineNumber(String code) {
         Matcher m = Pattern.compile("(.*?)&#10;").matcher(code);
         StringBuffer sb = new StringBuffer();
@@ -379,8 +398,8 @@ public class CodeView extends WebView {
         while (m.find()) {
             m.appendReplacement(sb,
                     String.format(Locale.ENGLISH,
-                            "<tr><td line='%d' class='hljs-number ln'></td><td onclick='android.onLineClicked(%d, this.textContent);' class='line'>$1 </td></tr>&#10;",
-                            pos, pos));
+                            "<tr><td line='%d' class='hljs-number ln'></td><td line='%d' onclick='android.onLineClicked(%d, this.textContent);' class='line'>$1 </td></tr>&#10;",
+                            pos, pos, pos));
             pos++;
             lineCount++;
         }

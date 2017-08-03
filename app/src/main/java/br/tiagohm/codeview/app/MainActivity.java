@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements CodeView.OnHighli
 
         mCodeView.setOnHighlightListener(this)
                 .setOnHighlightListener(this)
-                .setTheme(Theme.AGATE)
+                .setTheme(Theme.ARDUINO_LIGHT)
                 .setCode(JAVA_CODE)
                 .setLanguage(Language.AUTO)
                 .setWrapLine(true)

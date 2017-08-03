@@ -6,5 +6,6 @@
         <attr name="cv_zoom_enable" format="boolean"/>
         <attr name="cv_show_line_number" format="boolean"/>
         <attr name="cv_start_line_number" format="integer"/>
+        <attr name="cv_highlight_line_number" format="integer"/>
     </declare-styleable>
 </resources>
